@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "description": "Crimson Royale card palette tokens. Schema and usage rules are documented in design/art-bible.md (Color Palette section). Values are sRGB hex strings.",
+  "crimsonRoyale": {
+    "crimson": { "name": "Royal Crimson", "hex": "#781B2B", "role": "border line, card name, body text" },
+    "ruby": { "name": "Ruby Red", "hex": "#A52B3B", "role": "secondary text: tier label, stat labels" },
+    "gold": { "name": "Champagne Gold", "hex": "#D8B467", "role": "stars and accents; never text on ivory" },
+    "aged": { "name": "Aged Ivory", "hex": "#E8D1A5", "role": "card surface, darker gradient end" },
+    "pale": { "name": "Pale Ivory", "hex": "#F0E3BD", "role": "card surface, lighter gradient end" }
+  },
+  "cardFrame": {
+    "cardCornerRadiusPx": 18,
+    "borderInsetPx": 10,
+    "borderWidthPx": 1.5,
+    "borderCornerRadiusPx": 12,
+    "borderColor": "crimson",
+    "starColor": "gold",
+    "surfaceGradient": ["pale", "aged"]
+  }
+}
