@@ -46,7 +46,7 @@ color:var(--pale);font-size:14px;line-height:1.55;padding:0}
 /* ivory context (crimson ink on ivory cards) */
 .cg .card,.cg .unit{--tx:var(--crimson);--tx2:var(--ruby);--tx3:var(--ruby);--bd:rgba(120,27,43,.35);--errc:var(--ruby);--discc:var(--crimson);--chipbg:rgba(120,27,43,.1);--chiptx:var(--crimson);--rowbd:rgba(120,27,43,.22);color:var(--crimson)}
 
-.cg nav{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;margin:0 0 19px;padding:8px;border:1px solid rgba(216,180,103,.45);border-radius:999px;background:rgba(61,12,22,.95);backdrop-filter:blur(15px);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.cg nav{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:7px;margin:0 0 19px;padding:8px;border:1px solid rgba(216,180,103,.45);border-radius:999px;background:rgba(61,12,22,.95);backdrop-filter:blur(15px);box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .cg button{font:inherit;font-size:13px;font-weight:650;min-height:39px;padding:9px 20px;background:linear-gradient(180deg,var(--pale),var(--aged));color:var(--crimson);border:1px solid var(--crimson);border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 5px 12px rgba(0,0,0,.35);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .36s cubic-bezier(.34,1.56,.64,1),background .16s,border-color .16s,box-shadow .16s}
 .cg button:hover:not(:disabled){background:linear-gradient(180deg,var(--aged),var(--gold));border-color:var(--ruby);transform:translateY(-2px)}
 .cg button:active:not(:disabled){transform:translateY(2px) scale(.96);box-shadow:inset 0 2px 6px rgba(61,12,22,.5);transition-duration:.07s}
@@ -117,11 +117,11 @@ color:var(--pale);font-size:14px;line-height:1.55;padding:0}
 
 </style>
 
-<h2 class="sr-only">VAINWARD v1.1, a playable collectible-card tactical RPG: nine original-world maps, a separate Vainbound realm, Tier 5 evolution, Hybrids, Red Artifacts and card-based shops.</h2>
-<main class="shell"><header class="mast"><div class="brandline"><div class="crest" aria-hidden="true">✦</div><div><div class="eyebrow">Tactical card RPG</div><h1>VAINWARD</h1></div></div><span class="version">v1.1</span></header><div class="cg"><nav id="nav" aria-label="Game sections"></nav><div id="app"><section class="card" role="status"><h2>Starting VAINWARD…</h2><p>If this message stays visible, your file viewer may be blocking JavaScript. Open the downloaded HTML file in a full browser such as Safari or Chrome.</p></section></div></div><footer class="footer">VAINWARD · Cards, evolution and tactical combat</footer></main>
+<h2 class="sr-only">VAINWARD v1.2, a playable collectible-card tactical RPG: nine original-world maps, a separate Vainbound realm, Tier 5 evolution, Hybrids, Red Artifacts and card-based shops.</h2>
+<main class="shell"><header class="mast"><div class="brandline"><div class="crest" aria-hidden="true">✦</div><div><div class="eyebrow">Tactical card RPG</div><h1>VAINWARD</h1></div></div><span class="version">v1.2</span></header><div class="cg"><nav id="nav" aria-label="Game sections"></nav><div id="app"><section class="card" role="status"><h2>Starting VAINWARD…</h2><p>If this message stays visible, your file viewer may be blocking JavaScript. Open the downloaded HTML file in a full browser such as Safari or Chrome.</p></section></div></div><footer class="footer">VAINWARD · Cards, evolution and tactical combat</footer></main>
 <script>
 
-const VERSION='1.1';
+const VERSION='1.2';
 const TOK={str:['Strength','off'],crit:['Crit','off'],block:['Block','def'],dodge:['Dodge','def'],guard:['Guard','def'],weak:['Weak','neg'],vuln:['Vulnerable','neg'],mark:['Mark','set'],frenzy:['Frenzy','set'],stun:['Stunned','neg'],frozen:['Frozen','neg'],asleep:['Asleep','neg'],nullify:['Nullified','neg'],forced:['Forced','neg'],rooted:['Rooted','neg']};
 const OPP={str:'weak',weak:'str',block:'vuln',vuln:'block'};const CAP=3;
 const STS={bleed:{n:'Bleed',dmg:3},burn:{n:'Burn',dmg:4}};
@@ -547,7 +547,7 @@ const MAXREC=5,MAXX=5;
 let S=null,C=null,tab='map',hard=false,fuseSel=[],fuseBr=null,fuseAdv=false,undo=[],ui={open:{},flt:'All',tf:0,fav:0,upg:0,q:{},pick:null,rf:{},keep:1,rtab:'Available',msg:''};
 
 function fresh(){
- const s={v:4,coin:ECON.startCoin,prog:{hybrid:0,vainbound:0},unl:{},mem:{},inf:{slots:[null,null,null,null,null],types:{}},pr:{},ts:0,seed:20261119,uid:1,team:[],pcs:[],cards:[],hy:{},rec:{},xp:{},kills:{},know:{},disc:[],hist:[],rooms:{},seen:{},presets:[],xs:[]};
+ const s={v:4,coin:ECON.startCoin,prog:{hybrid:0,vainbound:0},unl:{},mem:{},inf:{slots:[null,null,null,null,null],types:{}},pr:{},trials:{},rogue:{best:0,milestones:0},run:null,ts:0,seed:20261119,uid:1,team:[],pcs:[],cards:[],hy:{},rec:{},xp:{},kills:{},know:{},disc:[],hist:[],rooms:{},seen:{},presets:[],xs:[]};
  const c=k=>{const x=newCard(s,k,1,1);s.cards.push(x);return x.uid};
  const a=[c('slash'),c('guardup'),c('rend'),c('pistol')],b=[c('aimed'),c('markprey')];
  c('slash');c('pierce');c('backpack');c('spider');const r=c('ashrat');
@@ -595,10 +595,10 @@ function pcOff(p){return (1+.04*(p.lv-1))*Math.pow(1.15,p.tier-1)}
 function slots(p){const l=lvl(S.xp[PCD[p.k].fam]);return 4+(l>=2?1:0)+(l>=4?1:0)}
 function roomOpen(m){if(S.unl&&S.unl[m.id])return true;const R=S.rooms[m.id];if(R&&R.w>0)return true;if(!m.prev)return true;const P=S.rooms[m.prev];return !!(P&&P.w>0)}
 function equippedSet(){const s=new Map();S.pcs.forEach(p=>{p.ab.forEach(u=>s.set(u,p.uid));if(p.sup)s.set(p.sup,p.uid)});(S.xs||[]).forEach(x=>s.set(x.c,'x'));return s}
-function prot(c,eq){eq=eq||equippedSet();return eq.has(c.uid)||c.fav||c.lock||c.evo||(c.gen>=2&&S.cards.filter(x=>skey(x)===skey(c)).length===1)}
-function protWhy(c,eq){eq=eq||equippedSet();return eq.has(c.uid)?'equipped':c.fav?'favorite':c.lock?'locked':c.evo?'evolved':c.gen>=2&&S.cards.filter(x=>skey(x)===skey(c)).length===1?'unique lineage':''}
+function prot(c,eq){eq=eq||equippedSet();return eq.has(c.uid)||c.sat||c.fav||c.lock||c.evo||(c.gen>=2&&S.cards.filter(x=>skey(x)===skey(c)).length===1)}
+function protWhy(c,eq){eq=eq||equippedSet();return c.sat?'unsecured loot':eq.has(c.uid)?'equipped':c.fav?'favorite':c.lock?'locked':c.evo?'evolved':c.gen>=2&&S.cards.filter(x=>skey(x)===skey(c)).length===1?'unique lineage':''}
 function ancSig(a){return a?a.n+'('+(a.p||[]).map(ancSig).join(',')+')':''}
-function skey(c){return [c.id,c.tier,c.lv,c.evo?1:0,(c.perm||[]).slice().sort().join(','),(c.act||[]).slice().sort().join(','),ancSig(c.anc),(c.dev||[]).map(d=>d.to).join(','),c.pend||0].join('|')}
+function skey(c){return [c.id,c.tier,c.lv,c.evo?1:0,(c.perm||[]).slice().sort().join(','),(c.act||[]).slice().sort().join(','),ancSig(c.anc),(c.dev||[]).map(d=>d.to).join(','),c.pend||0,c.sat?1:0].join('|')}
 function stacks(list){const m=new Map();list.forEach(c=>{const k=skey(c);if(!m.has(k))m.set(k,[]);m.get(k).push(c)});return [...m.entries()].map(([k,cs])=>({k,cs,c:cs.slice().sort((a,b)=>(b.tp||0)-(a.tp||0))[0],n:cs.length})).sort((a,b)=>cN(a.c).localeCompare(cN(b.c))||b.c.tier-a.c.tier||b.c.lv-a.c.lv)}
 function free(list,eq){eq=eq||equippedSet();return list.filter(c=>!prot(c,eq))}
 function snapshot(why){undo.push({why,s:JSON.stringify(S)});if(undo.length>6)undo.shift()}
@@ -643,11 +643,11 @@ function startCombat(rid,auto){
  C.casino=!!m.casino;C.waves=(m.memWaves&&S.mem&&S.mem[m.id])?m.memWaves:(m.waves||[m.foes]);C.wave=0;C.secured={coin:0,cards:[],uids:[]};C.unattended=!!auto;spawnWave(m,0);
  clog(`— ${m.n}${hard?' (Hard)':''}${C.waves.length>1?' · '+C.waves.length+' waves':''} · ${team.length} fighter${team.length>1?'s':''} · ${ex.length} shared card${ex.length===1?'':'s'} · seed ${C.seed} —`);
  alive('p').forEach(u=>{startFx(u,u.tr);const P=PCD[u.k];if(P.startTok)for(const t in P.startTok)addTok(u,t,P.startTok[t])});
- applyInfusions();roundStart();tab='battle';if(auto)runAuto();save();render();
+ runApplyHp();applyInfusions();roundStart();tab='battle';if(auto)runAuto();save();render();
 }
 function roundStart(){clog(`Round ${C.round}`);alive('p').forEach(u=>{u.pl=u.pmax;u.tr.forEach(k=>{const T=TRX(k);if(T.round&&u.pos==='front')for(const t in T.round)addTok(u,t,T.round[t])});u.dep.forEach(c=>{if(D(c).roundMark){const e=alive('e').filter(x=>!x.tok.mark).sort((a,b)=>b.hp-a.hp)[0];if(e){addTok(e,'mark',1);clog(`  ${D(c).n}: ${e.n} marked`)}}})});C.acted={};C.pick=null;alive('e').forEach(e=>{if(e.slowUntil&&C.round>e.slowUntil){e.slowUntil=0;e.dodgeP=e.dodgeBase;e.dm=e.dmBase}});alive('e').forEach(e=>{if(e.f&&e.f.shift&&C.round>1){e.stone=!e.stone;e.arm+=e.stone?3:-3;clog(`  ${e.n} becomes ${(e.f.names||['Living','Stone'])[e.stone?1:0]}`)}});C.units.filter(x=>!x.dead).forEach(x=>{const why=x.tok.frozen>0?'frozen':x.tok.asleep>0?'asleep':x.tok.stun>0?'stunned':null;x.supp=x.tok.nullify>0;x.forced=x.tok.forced>0?x.forceId:null;x.rooted=x.tok.rooted>0;x.movedFree=0;CTRL.forEach(k=>{x.tok[k]=0});if(why&&x.side==='p'){C.acted[x.id]=1;clog(`  ${x.n} is ${why} and loses this turn`)}});if(C.ironRound&&C.round>1)alive('p').filter(p=>p.pos==='front').forEach(p=>addTok(p,'block',1));const f=alive('p').find(u=>!u.npc&&!C.acted[u.id]);C.sel=f?f.id:null}
 function abilList(u){let l;if(u.form)l=FORMS[u.form].ab.map(k=>({key:'f'+k,c:{uid:'f'+k,id:k,lv:1,tier:1,tr:[],act:[],perm:[],st:{}}}));else l=u.cards.map(c=>({key:c.uid,c}));
- l.forEach(x=>{x.d=eff(x.c);x.ext=u.ext&&u.ext.has(x.c.uid)});return l.sort((a,b)=>a.d.n.localeCompare(b.d.n)||b.c.tier-a.c.tier)}
+ l.forEach(x=>{x.d=eff(x.c);x.ext=u.ext&&u.ext.has(x.c.uid)});if(C&&ROOMS[C.rid]&&ROOMS[C.rid].run==='rogue'&&u.k==='you'&&!l.some(x=>isAtk(x.d))){const sc={uid:'scrape',id:'scrape',lv:1,tier:1,tr:[],act:[],perm:[],st:{}};l.push({key:'scrape',c:sc,d:eff(sc),ext:false})}return l.sort((a,b)=>a.d.n.localeCompare(b.d.n)||b.c.tier-a.c.tier)}
 function usable(u,a){if((a.d.use==='once'||a.d.use==='deploy')&&C.once[a.c.uid])return false;if(u.supp&&a.d.use==='deploy')return false;if(C.restrict&&C.restrict.until===C.round&&!u.npc&&isAtk(a.d)&&a.d.reach===C.restrict.type)return false;return targets(u,a.d).length>0}
 function targets0(u,d){
  if(d.use==='deploy'||d.tgt==='self')return[u];
@@ -813,6 +813,7 @@ function givePC(k,why){const o=S.pcs.find(p=>p.k===k);if(o){o.dup++;return `${PC
 function gain(c,pts){const out=[];c.xp+=pts;while(c.lv<5&&c.xp>=need(c)){c.xp-=need(c);c.lv++;out.push(`${D(c).n} → Lv${c.lv}`)}if(c.lv>=5&&c.xp>0){c.tp=(c.tp||0)+c.xp;c.xp=0}return out}
 function levelUpP(p){const out=[];while(p.lv<5&&p.xp>=p.lv*6*p.tier){p.xp-=p.lv*6*p.tier;p.lv++;out.push(`${PCD[p.k].n} → Lv${p.lv}`)}return out}
 function onWin(){
+ if(ROOMS[C.rid].run){clog('Victory');onRunWin(ROOMS[C.rid]);return}
  clog('Victory');const m=ROOMS[C.rid];const R=S.rooms[m.id]||(S.rooms[m.id]={w:0,best:0});const first=!R.w;R.w++;R.best=R.best?Math.min(R.best,C.round):C.round;
  if(m.waves.some(w=>w.some(k=>EN[k].adapt))){const best=Object.entries(C.used).filter(([f])=>f!=='ghost').sort((a,b)=>b[1]-a[1])[0];if(best)S.mem[m.id]={fam:best[0].split('+')[0],uses:best[1]}}const coin=winCoin(m,first,C.hard);S.coin=(S.coin||0)+coin;C.coin=coin;const ups=[];const xpg={};for(const f in C.used)f.split('+').forEach(p=>xpg[p]=(xpg[p]||0)+2*C.used[f]);
  C.units.filter(u=>u.side==='p'&&!u.npc).forEach(u=>{xpg[u.fam]=(xpg[u.fam]||0)+5;u.sups.forEach(s=>D(s).fam.split('+').forEach(p=>xpg[p]=(xpg[p]||0)+5));
@@ -830,7 +831,7 @@ function onWin(){
  if(first&&m.first){if(m.first.startsWith('pc:'))C.bonus.push(givePC(m.first.slice(3),'first clear'));else{const c=newCard(S,m.first,1,1);S.cards.push(c);C.bonus.push('First-clear bonus: '+DEF[m.first].n)}}
  if(C.hard&&!R.hw&&!m.vb){R.hw=1;const k=m.ab[0];const c=newCard(S,k,2,1);S.cards.push(c);C.bonus.push(`Hard first-clear bonus: ${DEF[k].n} T2`)}
  C.bonus.forEach(b=>hist(S,b));hist(S,`Won: ${m.n}${C.hard?' (Hard)':''} in ${C.round} rounds (seed ${C.seed})`);C.claimId='w'+S.uid++}
-function claim(i){if(!C||C.over!=='win'||C.claimed)return;const o=C.offers[i];if(!o)return;const c=newCard(S,o.id,o.tier,o.lv);S.cards.push(c);C.claimed=1;hist(S,`Claimed (${C.claimId}): ${DEF[o.id].n} T${o.tier} Lv${o.lv}`);save();render()}
+function claim(i){if(!C||C.over!=='win'||C.claimed)return;const o=C.offers[i];if(!o)return;const c=newCard(S,o.id,o.tier,o.lv);S.cards.push(c);C.claimed=1;if(S.run&&S.run.mode==='rogue')rdAutoEquip(c);hist(S,`Claimed (${C.claimId}): ${DEF[o.id].n} T${o.tier} Lv${o.lv}`);save();render()}
 function canTier(c){return !D(c).art&&c.lv>=5&&c.tier<5&&(c.tp||0)>=tneed(c)}
 function tierUp(uid,quiet){const c=byUid(S.cards,uid);if(!c||!canTier(c))return false;const before=eff(c).pow||0;const nc=capTr(Object.assign({},c,{tier:c.tier+1})).filter(k=>!capTr(c).includes(k));c.tp-=tneed(c);c.tier++;c.lv=1;c.xp=0;if(EVO_CHOICES[c.tier]&&devOptions(c).length)c.pend=EVO_CHOICES[c.tier];if((eff(c).pow||0)<before-1e-9)throw new Error('tier regression');hist(S,`${D(c).n} advanced to Tier ${c.tier}${nc.length?' — gained '+nc.map(k=>TRX(k).n).join(', '):''}`);if(!quiet){save();render()}return true}
 function unequip(u){S.pcs.forEach(p=>{p.ab=p.ab.filter(x=>x!==u);if(p.sup===u)p.sup=null});S.xs=(S.xs||[]).filter(x=>x.c!==u)}
@@ -951,7 +952,7 @@ function validate(s){const fix=[];const ids=new Set();s.cards=s.cards.filter(c=>
  s.team=s.team.filter(u=>s.pcs.some(p=>p.uid===u&&p.k!=='you'));const mx=Math.max(0,...s.cards.map(c=>c.uid),...s.pcs.map(p=>p.uid));if(s.uid<=mx){s.uid=mx+1;fix.push('uid counter')}
  if(typeof s.coin!=='number'||!isFinite(s.coin)||s.coin<0){s.coin=Math.max(0,Math.floor(+s.coin)||0);fix.push('marks balance')}
  s.prog=s.prog||{hybrid:0,vainbound:0};if(s.prog.hybrid&&!s.prog.vainbound){s.prog.vainbound=1;fix.push('vainbound unlock')}
- s.unl=s.unl||{};s.rooms=s.rooms||{};s.mem=s.mem||{};s.seen=s.seen||{};normInf(s);s.pr=s.pr||{};s.cards.forEach(c=>{s.seen[c.id]=1});for(const k in s.mem)if(!ROOMS[k])delete s.mem[k];for(const k in s.rooms)if(!ROOMS[k]){delete s.rooms[k];fix.push('removed unknown room '+k)}
+ s.unl=s.unl||{};s.rooms=s.rooms||{};s.mem=s.mem||{};s.seen=s.seen||{};normInf(s);s.pr=s.pr||{};s.trials=s.trials||{};s.rogue=s.rogue||{best:0,milestones:0};if(s.run===undefined)s.run=null;s.cards.forEach(c=>{s.seen[c.id]=1});for(const k in s.mem)if(!ROOMS[k])delete s.mem[k];for(const k in s.rooms)if(!ROOMS[k]){delete s.rooms[k];fix.push('removed unknown room '+k)}
  return fix}
 const OLDCR={ashrat:1,duskbat:1,thornback:1,embermoth:1,wolfpup:1};
 function nameToId(n){return Object.keys(DEF).find(k=>DEF[k].n===n)}
@@ -972,12 +973,12 @@ function migrate0(s){if(!s)return null;
 
 /* ===== Expansion logic ===== */
 function applyMemory(e,m){if(e.adapt&&S.mem&&S.mem[m.id]){const f=S.mem[m.id].fam;if(f&&!e.res.includes(f)){e.res=[...e.res,f];e.mem=f;if(e.k==='redwater'){e.pos='back';clog(`  ${e.n} changes its formation and stays behind its pack`)}clog(`  ${e.n} remembers your ${f} tactics and braces against them`)}}}
-function spawnWave(m,i){C.waves[i].forEach(k=>{const e=mkE(k,C.ne++,C.hard);applyMemory(e,m);C.units.push(e)})}
-function advanceWave(){const m=ROOMS[C.rid];const done=C.wave;C.wave++;const R=S.rooms[m.id];
+function spawnWave(m,i){C.waves[i].forEach(k=>{const e=mkE(k,C.ne++,C.hard);applyMemory(e,m);if(m.scale&&m.scale!==1){e.max=e.hp=Math.round(e.max*m.scale);e.dm=e.dmBase=e.dm*(1+(m.scale-1)*.5)}C.units.push(e)})}
+function advanceWave(){const m=ROOMS[C.rid];const done=C.wave;C.wave++;if(m.run){clog(`Wave ${done+1} cleared. Nothing is restored`);spawnWave(m,C.wave);clog(`Wave ${C.wave+1} of ${C.waves.length} arrives`);return}const R=S.rooms[m.id];
  const coin=Math.round(winCoin(m,!(R&&R.w),C.hard)*WAVES.coinShare);S.coin+=coin;C.secured.coin+=coin;let got='';
  const pool=[...m.ab,...m.cr];if(WAVES.cards&&pool.length){const k=pool[Math.floor(rng()*pool.length)];const had=!!S.seen[k];const c=newCard(S,k,1,1);S.cards.push(c);C.secured.uids.push([c.uid,k,had]);C.secured.cards.push(DEF[k].n);got=DEF[k].n}
  hist(S,`Wave ${done+1} of ${m.n} cleared: ${coin} marks${got?', '+got:''}`);clog(`Wave ${done+1} cleared. Secured ${coin} marks${got?' and '+got:''}. Health and resources carry over, nothing is restored`);spawnWave(m,C.wave);clog(`Wave ${C.wave+1} of ${C.waves.length} arrives`)}
-function forfeitWaves(){if(WAVES.keepOnDefeat||!C.secured||!(C.secured.coin||C.secured.uids.length))return;C.secured.uids.forEach(([u,id,had])=>{const i=S.cards.findIndex(c=>c.uid===u);if(i>=0)S.cards.splice(i,1);if(!had)delete S.seen[id]});S.coin=Math.max(0,S.coin-C.secured.coin);C.secured={coin:0,cards:[],uids:[]};clog('Defeat: wave rewards won during this run are forfeited')}
+function forfeitWaves(){if(ROOMS[C.rid]&&ROOMS[C.rid].run)runLoss();if(WAVES.keepOnDefeat||!C.secured||!(C.secured.coin||C.secured.uids.length))return;C.secured.uids.forEach(([u,id,had])=>{const i=S.cards.findIndex(c=>c.uid===u);if(i>=0)S.cards.splice(i,1);if(!had)delete S.seen[id]});S.coin=Math.max(0,S.coin-C.secured.coin);C.secured={coin:0,cards:[],uids:[]};clog('Defeat: wave rewards won during this run are forfeited')}
 function winCoin(m,first,hd){const W=ECON.win;return Math.round((W.base+W.perThreat*m.threat+(m.type==='Boss'?W.boss:0))*(first?W.first:W.repeat)*(hd?W.hard:1))}
 function onHybridCreated(c){S.prog=S.prog||{hybrid:0,vainbound:0};if(S.prog.hybrid)return;S.prog.hybrid=1;S.prog.vainbound=1;ui.vbNew=1;addDisc('Milestone — first Hybrid: the Vainbound realm opens');hist(S,'First Hybrid created ('+D(c).n+'). The Vainbound realm is open')}
 function layTracks(u){const rs=WHISTLE.rounds;C.tracks={until:C.round+rs-1,last:0};alive('e').forEach(e=>{e.dodgeP=Math.round(e.dodgeBase*WHISTLE.slowDodgeMult);e.dm=e.dmBase*WHISTLE.slowDamageMult;e.slowUntil=C.round+rs-1});clog(`  Spectral tracks cover the field for ${rs} rounds. Enemies are slowed`)}
@@ -1106,7 +1107,7 @@ function infAssign(id,cards){const roles=INF[id].roles;if(cards.length<roles.len
  const r=rec(0,new Set());return r?r.map(i=>cards[i]):null}
 function infDiscover(){let n=0;Object.keys(INF).forEach(id=>{const r=S.inf.types[id]=S.inf.types[id]||{stage:0};if(!r.disc&&(r.stage>0||infRecipeReady(id))){r.disc=1;n++;addDisc('Infusion discovered — '+INF[id].n)}});return n}
 function infEligible(id){const roles=INF[id].roles;return infFree().filter(c=>roles.some(r=>hasP(c,r.any)))}
-function infCreate(id,uids){const I=INF[id];if(!I||infStage(id)>0)return;const cards=[...new Set(uids)].map(u=>byUid(S.cards,u));
+function infCreate(id,uids){const I=INF[id];if(!I||infStage(id)>0)return;if(S.run&&S.run.stash){ui.err='Infusions cannot be changed during a run.';return render()}const cards=[...new Set(uids)].map(u=>byUid(S.cards,u));
  if(cards.length!==I.roles.length||cards.some(c=>!c)){ui.err='Choose exactly '+I.roles.length+' cards.';return render()}
  const eq=equippedSet();if(cards.some(c=>D(c).art||prot(c,eq))){ui.err='Protected cards cannot be spent. Unequip or unlock them first.';return render()}
  if(!infAssign(id,cards)){ui.err='These cards do not provide every required property.';return render()}
@@ -1114,7 +1115,7 @@ function infCreate(id,uids){const I=INF[id];if(!I||infStage(id)>0)return;const c
  cards.forEach(c=>{S.cards.splice(S.cards.indexOf(c),1);unequip(c.uid)});
  S.inf.types[id]={stage:1,disc:1,fams};const slot=S.inf.slots.indexOf(null);if(slot>=0)S.inf.slots[slot]=id;
  hist(S,`Infusion created: ${I.n} (consumed ${cards.map(c=>D(c).n).join(', ')})`);ui.msg=`${I.n} created${slot>=0?' and equipped':'. All five slots are full, equip it from the list'}`;ui.infSel=null;ui.infPick=[];validate(S);save();render()}
-function infUpgrade(id,uids){const I=INF[id];const st=infStage(id);if(!I||st<1||st>=infMax(id))return;const need=I.cost[st-1];const cards=[...new Set(uids)].map(u=>byUid(S.cards,u));
+function infUpgrade(id,uids){const I=INF[id];const st=infStage(id);if(!I||st<1||st>=infMax(id))return;if(S.run&&S.run.stash){ui.err='Infusions cannot be changed during a run.';return render()}const need=I.cost[st-1];const cards=[...new Set(uids)].map(u=>byUid(S.cards,u));
  if(cards.length!==need||cards.some(c=>!c)){ui.err='Choose exactly '+need+' cards.';return render()}
  const eq=equippedSet();if(cards.some(c=>D(c).art||prot(c,eq)||!I.roles.some(r=>hasP(c,r.any)))){ui.err='Every card must be eligible and unprotected.';return render()}
  snapshot('upgrade '+I.n);if(id==='chimeric'){const rec=S.inf.types.chimeric;rec.fams=rec.fams||[];cards.forEach(c=>{if(D(c).cat==='Creature')String(D(c).fam).split('+').forEach(f=>{if(!rec.fams.includes(f))rec.fams.push(f)})})}
@@ -1189,9 +1190,10 @@ function battleHTML(){
  if(C.over==='win'){
   h+=`<div class="banner" style="background:var(--grnbg);color:var(--grn)"><b>Victory</b> in ${C.round} rounds. +${C.coin} marks.</div>`;if(C.ups.length)h+=`<div class="tiny">${esc(C.ups.join(' · '))}</div>`;
   C.bonus.forEach(b=>h+=`<div class="banner" style="background:var(--purbg);color:var(--pur)">${esc(b)}</div>`);
-  if(!C.claimed){h+=`<h2>Choose 1 card</h2>`+C.offers.map((o,i)=>{const d=DEF[o.id];const ps={id:o.id,lv:o.lv,tier:o.tier,tr:d.tr||[],act:d.tr||[],perm:[],st:{}};const own=S.cards.filter(c=>c.id===o.id).length;return `<div class="card"><div class="row sb"><span>${ic(d.cat)} <b>${d.n}</b> ${o.art?'':tpill(o.tier)} ${o.art?'':'<span class="tiny">Lv'+o.lv+'</span>'}</span><span class="chip ${['','','def','off'][o.rar]}">${o.art?'Red Artifact':['','Common','Rare','Epic'][o.rar]}</span></div><div class="mut">${cardSum(ps)}</div><div class="row sb"><span class="tiny">${own?'You own '+own:'New card'}</span><button class="sm pri" data-claim="${i}">Take</button></div></div>`}).join('')}
-  else h+=`<div class="row" style="margin-top:8px"><button class="pri" data-again="1">Fight again</button>${ROOMS[C.rid].vb?'<button data-tab="vb">Vainbound</button>':'<button data-tab="map">World</button>'}<button data-tab="cards">Cards</button></div>`}
+  if(!C.claimed&&C.offers&&C.offers.length){h+=`<h2>Choose 1 card</h2>`+C.offers.map((o,i)=>{const d=DEF[o.id];const ps={id:o.id,lv:o.lv,tier:o.tier,tr:d.tr||[],act:d.tr||[],perm:[],st:{}};const own=S.cards.filter(c=>c.id===o.id).length;return `<div class="card"><div class="row sb"><span>${ic(d.cat)} <b>${d.n}</b> ${o.art?'':tpill(o.tier)} ${o.art?'':'<span class="tiny">Lv'+o.lv+'</span>'}</span><span class="chip ${['','','def','off'][o.rar]}">${o.art?'Red Artifact':['','Common','Rare','Epic'][o.rar]}</span></div><div class="mut">${cardSum(ps)}</div><div class="row sb"><span class="tiny">${own?'You own '+own:'New card'}</span><button class="sm pri" data-claim="${i}">Take</button></div></div>`}).join('')}
+  else if(ROOMS[C.rid].run||(C.rid==='rd_run'))h+=runWinFooter();else h+=`<div class="row" style="margin-top:8px"><button class="pri" data-again="1">Fight again</button>${ROOMS[C.rid].vb?'<button data-tab="vb">Vainbound</button>':'<button data-tab="map">World</button>'}<button data-tab="cards">Cards</button></div>`}
  else if(C.over==='retreat')h+=`<div class="banner" style="background:var(--ambbg);color:var(--amb)"><b>Retreated.</b> Wave rewards already secured are kept. The room-clear reward is forfeited. Health restored for the next attempt.</div><div class="row"><button class="pri" data-again="1">Try again</button>${ROOMS[C.rid].vb?'<button data-tab="vb">Vainbound</button>':'<button data-tab="map">World</button>'}</div>`;
+ else if(C.over==='loss'&&ROOMS[C.rid]&&ROOMS[C.rid].run)h+=runLossHTML();
  else if(C.over==='loss')h+=`<div class="banner" style="background:var(--redbg);color:var(--red)"><b>Defeat.</b> Unclaimed rewards and wave rewards from this run are forfeited. Health restored; no owned cards lost.</div><div class="row"><button class="pri" data-again="1">Retry</button><button data-tab="team">Adjust team</button></div>`;
  else{if(C.rule&&C.rule.until===C.round)h+=`<div class="banner" style="background:var(--ambbg);color:var(--amb)"><b>Thesis in effect:</b> ${C.rule.kind==='healharm'?'healing harms its targets this turn':'ranged attacks can only strike the front row this turn'}</div>`;if(C.restrict&&C.restrict.until===C.round)h+=`<div class="banner" style="background:var(--ambbg);color:var(--amb)"><b>Written law:</b> ${C.restrict.type} attacks are unavailable this turn</div>`;if(C.paused)h+=`<div class="banner" style="background:var(--ambbg);color:var(--amb)">Auto paused for your input.</div>`;
   const u=C.units.find(x=>x.id===C.sel);
@@ -1302,17 +1304,28 @@ function archHTML(){
  h+=`<textarea id="imp" rows="2" placeholder="Paste a save code"></textarea><div class="row"><button class="sm" data-imp="1">Load save code</button><span id="imperr" class="err"></span></div>`;
  h+=`<h2>Reset</h2>${ui.reset?`<div class="row"><span class="err">Erase all progress?</span><button class="sm" data-reset="2">Erase</button><button class="sm" data-reset="0">Cancel</button></div>`:`<button class="sm" data-reset="1">Start over</button>`}<div class="tiny" style="margin-top:8px">Prototype v${VERSION}. Balance values are provisional.</div>`;return h}
 function render(){
- const tabs=[['map','World'],['battle','Battle'],['team','Team'],['cards','Cards'],['fuse','Fuse'],['shop','Shop'],['vb','Vainbound'],['arch','Archive']];
+ const tabs=[['map','World'],['battle','Battle'],['team','Team'],['cards','Cards'],['fuse','Fuse'],['shop','Shop'],['vb','Vainbound'],['modes','Modes'],['arch','Archive']];
  $('nav').innerHTML=tabs.map(([k,l])=>`<button class="${tab===k?'on':''} ${k==='vb'&&!S.prog.vainbound?'dim':''}" data-tab="${k}">${l}${k==='battle'&&C&&!C.over?' •':''}${k==='fuse'&&(ui.queue||[]).length?' ('+ui.queue.length+')':''}</button>`).join('');
- const SEC={map:['Original world','Nine maps, 28 rooms. Clear a room to unlock the next.'],shop:['Shop','Buy and sell cards. Everything you own is a card.'],vb:['Vainbound realm','A separate realm of exceptional bosses. Opened by your first Hybrid.'],battle:['Battle','Command your fighters each round. Each fighter takes one standard action.'],team:['Team','Set each fighter\'s cards, shared slots and saved loadouts.'],cards:['Cards','Your collection, sorted by tier. Refine spare copies to level cards up.'],fuse:['Fusion Chamber','Fuse cards into new cards, or infuse eligible cards into your Vainbound.'],arch:['Archive','Save your progress as a code, or restore it from one.']};
+ const SEC={map:['Original world','Nine maps, 28 rooms. Clear a room to unlock the next.'],shop:['Shop','Buy and sell cards. Everything you own is a card.'],modes:['Modes','Rogue Descent, Scavenger Runs and Trials of Fusion.'],vb:['Vainbound realm','A separate realm of exceptional bosses. Opened by your first Hybrid.'],battle:['Battle','Command your fighters each round. Each fighter takes one standard action.'],team:['Team','Set each fighter\'s cards, shared slots and saved loadouts.'],cards:['Cards','Your collection, sorted by tier. Refine spare copies to level cards up.'],fuse:['Fusion Chamber','Fuse cards into new cards, or infuse eligible cards into your Vainbound.'],arch:['Archive','Save your progress as a code, or restore it from one.']};
  const hd=SEC[tab];
- $('app').innerHTML=`<header class="sec"><h2>${hd[0]}</h2><p class="mut">${hd[1]}</p></header>`+({map:mapHTML,battle:battleHTML,team:teamHTML,cards:cardsHTML,fuse:fuseHTML,shop:shopHTML,vb:vbHTML,arch:archHTML}[tab]())}
+ $('app').innerHTML=`<header class="sec"><h2>${hd[0]}</h2><p class="mut">${hd[1]}</p></header>`+((modalBlocks(tab)?(()=>`<div class="card"><b>Unavailable during a run</b><div class="mut">This part of the game is paused while your ${S.run.mode==='rogue'?'Rogue Descent':S.run.mode==='trial'?'trial':'Scavenger run'} is active.</div><div class="row" style="margin-top:6px"><button class="pri" data-tab="modes">Back to the run</button></div></div>`):{map:mapHTML,battle:battleHTML,team:teamHTML,cards:cardsHTML,fuse:fuseHTML,shop:shopHTML,vb:vbHTML,modes:modesHTML,arch:archHTML}[tab])())}
 function assign(take){const pk=ui.pick;if(!pk)return;const c=byUid(S.cards,take);if(!c)return;const p=pk.p?byUid(S.pcs,pk.p):null;
  if(pk.m==='slot'){const arr=p.ab.slice();if(pk.i<arr.length)arr[pk.i]=c.uid;else arr.push(c.uid);p.ab=arr}else if(pk.m==='sup')p.sup=c.uid;else if(pk.m==='x'){if(pk.i<(S.xs||[]).length)S.xs[pk.i].c=c.uid;else S.xs.push({c:c.uid,to:teamFor()[0].uid})}
  ui.pick=null;ui.q.pick='';validate(S);save();render()}
 function onClick(e){
  const b=e.target.closest('button,[data-op],[data-mop],[data-u],[data-pk],[data-take]');if(!b)return;const Q=b.dataset;
  if(Q.tab){tab=Q.tab;ui.pick=null;return render()}
+ if(Q.rdstart)return rdStart(+Q.rdstart);
+ if(Q.rdfight)return rdFight();
+ if(Q.rdnext){rdNext();tab='modes';return render()}
+ if(Q.rdabandon){rdAbandon();tab='modes';return}
+ if(Q.scstart)return scStart();
+ if(Q.scfight)return scFight();
+ if(Q.scnext){scNext();tab='modes';return}
+ if(Q.scextract){scExtract();tab='modes';return}
+ if(Q.trstart)return trStart(Q.trstart);
+ if(Q.trfight)return trFight();
+ if(Q.trreset){trReset();return}
  if(Q.devopen){ui.devFor=+Q.devopen;ui.devSel=[];ui.devBulk=0;tab='cards';return render()}
  if(Q.devsel){ui.devSel=ui.devSel||[];const c0=byUid(S.cards,ui.devFor);if(!c0)return;const opts=devOptions(c0);const o=opts.find(x=>x.id===Q.devsel);if(!o)return;const i=ui.devSel.indexOf(o.id);if(i>=0)ui.devSel.splice(i,1);else{ui.devSel=ui.devSel.filter(id=>{const q=opts.find(x=>x.id===id);return q&&!q.ks.some(k=>o.ks.includes(k))});if(ui.devSel.length>=c0.pend)ui.devSel.shift();ui.devSel.push(o.id)}return render()}
  if(Q.devbulk){ui.devBulk=ui.devBulk?0:1;return render()}
@@ -1351,6 +1364,7 @@ function onClick(e){
  if(Q.fight)return startCombat(Q.fight,false);
  if(Q.autof)return startCombat(Q.autof,true);
  if(Q.again)return startCombat(C.rid,false);
+ if(Q.flee&&ROOMS[C.rid].run){C.over='loss';clog('You withdraw. The run ends here');forfeitWaves();save();return render()}
  if(Q.flee){C.over='retreat';clog('Retreated: wave rewards already secured are kept; the room-clear reward is forfeited');hist(S,'Retreated from '+ROOMS[C.rid].n);save();return render()}
  if(Q.surr){forceSurrender(Q.surr);save();return render()}
  if(Q.u&&C&&!C.over){const u=C.units.find(x=>x.id===Q.u);if(!u)return;
@@ -1506,6 +1520,112 @@ function sellStacks(){const eq=equippedSet();return stacks(S.cards.filter(c=>!D(
 function sellSelected(){const sel=ui.sellSel||{};const ss=sellStacks();const picks=[];ss.forEach(s=>{const n=Math.min(sel[s.id]||0,s.fr.length);for(let i=0;i<n;i++)picks.push(s.fr[i])});
  if(!picks.length){ui.err='Select cards to sell first.';return render()}const eq=equippedSet();if(picks.some(c=>D(c).art||prot(c,eq))){ui.err='A selected card is protected.';return render()}
  snapshot('sell '+picks.length+' cards');let total=0;picks.forEach(c=>{total+=sellValue(c);S.cards.splice(S.cards.indexOf(c),1)});S.coin+=total;hist(S,`Sold ${picks.length} cards for ${total} marks`);ui.sellSel={};ui.msg=`Sold ${picks.length} cards for ${total} marks`;validate(S);save();render()}
+
+/* ===== Modes: Rogue Descent, Trials of Fusion, Scavenger Runs. Numbers provisional. ===== */
+const RD={heal:.3,perBoss:5,milestoneMarks:40,enemyCap:4,scale:.07,upgradeChance:.08};
+const SCAV={scale:.12,marks:8,maxEnemies:4,rareChance:.1};
+const BANDS=[
+ ['rat','bat','beetle','wolf','skitter','thug','gunner','drone','eel','luckyimp','coindancer','roulettesprite','charmmoth','bloomdancer'],
+ ['slumbermoth','pillowwraith','dreameater','cindersmoker','ashlung','nicotinewisp','drunkengiant','winewraith','coinmite','oregolem','vaultcrab','grimoire','chalicevamp'],
+ ['ragehound','mudsnapper','bloodleech','berserker','boar','frenzyeel','nullknight','ashscholar','gargoyle','grafthound','bonepuppet','unstablevessel','livingtome','furnaceconstruct'],
+ ['bonecrusher','thornharpy','bladehorn','siegehound','mirrordouble','falsechampion','reflectionshade','frostrevenant','oathspirit','blackglass','winterbetrayer','sentry','bruiser','sniper']];
+const RD_BOSSES=['thehouse','belovedsovereign','vaultbreaker','redwater','professor','bastionbutcher','facelesshost','lastconfessor'];
+const bandOfMap=m=>m<=2?0:m<=4?1:m<=6?2:3;
+function bandPool(b){const ids=new Set();ROOM_LIST.filter(r=>bandOfMap(r.map)===b).forEach(r=>[...r.ab,...r.cr].forEach(k=>ids.add(k)));return[...ids].filter(k=>DEF[k]&&!DEF[k].art)}
+function topBand(){let m=0;ROOM_LIST.forEach(r=>{if(S.rooms[r.id]&&S.rooms[r.id].w>0)m=Math.max(m,r.map)});return m?bandOfMap(m):-1}
+const FORMDEF_ADD={scrape:{n:'Scrape',cat:'Ability',fam:'brawl',use:'act',reach:'melee',tgt:'one',pow:2}};
+Object.assign(FORMDEF,FORMDEF_ADD);
+Object.assign(EN,{
+glasscannon:{n:'Glass Cannon',fam:'construct',hp:40,arm:0,pos:'front',f:{reflect:4,reflectPct:1},moves:[{n:'Glass shot',pow:4,any:1},{n:'Polish',self:{block:1}}]},
+bouncer:{n:'The Very Polite Bouncer',fam:'human',hp:50,arm:8,pos:'front',moves:[{n:'Escort out',pow:6},{n:'Polite refusal',self:{block:2}}]},
+chair:{n:'Haunted Chair',fam:'ghost',hp:9,arm:0,pos:'front',dodge:40,moves:[{n:'Scoot',pow:2},{n:'Creak',self:{dodge:1}}]},
+surgeon:{n:'Sleep-Deprived Surgeon',fam:'human',hp:26,arm:0,pos:'back',moves:[{n:'Emergency stitch',heal:9},{n:'Scalpel',pow:3,any:1}]},
+patient:{n:'Very Healthy Patient',fam:'human',hp:50,arm:1,pos:'front',moves:[{n:'Cough',pow:2},{n:'Flex',self:{block:1}}]},
+lecturer:{n:'Reverse Seminar Lecturer',fam:'human',hp:60,arm:1,pos:'back',moves:[{n:'Syllabus: no melee',restrict:'melee'},{n:'Pop quiz',pow:7,any:1},{n:'Syllabus: healing harms',rule:'healharm'},{n:'Pop quiz',pow:7,any:1}]},
+pigeon:{n:'Court Pigeon',fam:'bird',hp:5,arm:0,pos:'front',dodge:25,moves:[{n:'Peck',pow:1}]},
+chiefpigeon:{n:'The Chief Pigeon',fam:'bird',hp:24,arm:0,pos:'back',dodge:20,moves:[{n:'Verdict',mimic:1},{n:'Coo',allies:{dodge:1}}]}});
+/* Trials: a fixed puzzle, a small temporary card set, any solution that wins counts. */
+const TRIALS=[
+{id:'cannon',n:'The Glass Cannon Problem',blurb:'A very expensive cannon made of mirror glass. It returns any hit that is big enough to notice. It is also rude about it.',cards:[['slash'],['pistol'],['shotgun'],['rend'],['cinder'],['sap'],['guardup']],waves:[['glasscannon']],tip:'Big single hits come back at you. There is more than one way to hurt a mirror.',reward:{marks:40,card:'taser'}},
+{id:'bouncer',n:'The Very Polite Bouncer',blurb:'He will walk you out, thank you for visiting, and take no damage whatsoever from a normal sword.',cards:[['slash'],['pierce'],['rend'],['focus'],['expose'],['brace']],waves:[['bouncer']],tip:'Armor 6 and Block every other turn. Think about what ignores or removes protection.',reward:{marks:40,card:'medkit'}},
+{id:'chairs',n:'Haunted Furniture',blurb:'Three chairs are haunted and none of them wants to be sat on. They dodge nearly everything and are unreasonably quick about it.',cards:[['aimed'],['volley'],['slash'],['markprey'],['focus'],['sap']],waves:[['chair','chair','chair']],tip:'Chairs dodge about 45% of single hits.',reward:{marks:40,card:'stimpack'}},
+{id:'surgeon',n:'The Sleep-Deprived Surgeon',blurb:'A surgeon who has not slept since Tuesday keeps stitching a patient who is in perfect health. Neither will leave.',cards:[['pistol'],['rend'],['drain'],['expose'],['brace'],['markprey']],waves:[['patient','surgeon']],tip:'Healing outpaces small hits. Someone is doing the healing.',reward:{marks:40,card:'backpack'}},
+{id:'seminar',n:'The Reverse Seminar',blurb:'A lecturer rewrites the rules of the room each turn. Today the topics are bandages and swords.',cards:[['mend'],['guardup'],['brace'],['aimed'],['pistol'],['slash']],waves:[['lecturer']],tip:'Healing can harm and some attacks go missing for a turn. Read the written laws.',reward:{marks:40,card:'helmet'}},
+{id:'pigeons',n:'The Pigeon Court',blurb:'Four pigeons and their Chief have formed a legal body. The Chief repeats whatever you did last, but with more authority.',cards:[['volley'],['taser'],['brace'],['guardup'],['slash'],['pistol']],waves:[['pigeon','pigeon','pigeon','pigeon'],['chiefpigeon']],tip:'Small, dodgy, numerous. The Chief mimics your last attack.',reward:{marks:40,card:'recon'}}];
+const inRun=()=>!!S.run;
+function modalBlocks(t){if(!S.run)return false;const m=S.run.mode;const ok=m==='scav'?['battle','team','cards','modes','arch']:['battle','team','cards','fuse','modes','arch'];return !ok.includes(t)}
+function freshYou(){return{uid:S.uid++,k:'you',lv:1,xp:0,tier:1,dup:0,ab:[],sup:null,pos:PCD.you.pos,evo:0}}
+function runStash(){return{cards:S.cards,pcs:S.pcs,team:S.team,xs:S.xs,seen:Object.assign({},S.seen),rec:S.rec}}
+function runRestore(){const st=S.run.stash;S.cards=st.cards;S.pcs=st.pcs;S.team=st.team;S.xs=st.xs;S.seen=Object.assign(st.seen,S.run.mintSeen||{});S.rec=st.rec}
+function runClear(){S.run=null;undo.length=0;ui.rfocus=null}
+function rdAutoEquip(c){const y=S.pcs.find(p=>p.k==='you');if(!y)return;const d=D(c);if(isCr(d)){if(!y.sup)y.sup=c.uid}else if(y.ab.length<slots(y)&&!y.ab.includes(c.uid))y.ab.push(c.uid)}
+/* ----- Rogue Descent ----- */
+function rdStart(uid){if(S.run||C&&!C.over){ui.err='Finish what you are doing first.';return render()}const src=byUid(S.cards,uid);if(!src||D(src).art){ui.err='Choose a card from your collection.';return render()}
+ const copy=JSON.parse(JSON.stringify(src));
+ S.run={mode:'rogue',floor:1,hp:{},stash:runStash(),mintSeen:{},minted:[]};undo.length=0;
+ S.cards=[];S.pcs=[freshYou()];S.team=[];S.xs=[];S.rec={};copy.uid=S.uid++;copy.fav=0;copy.lock=0;copy.sat=0;S.cards.push(copy);rdAutoEquip(copy);
+ ui.msg=`Rogue Descent begins with exactly one card: ${D(copy).n}. Cards you win here are temporary.`;tab='modes';save();render()}
+function rdRoom(){const f=S.run.floor;const band=Math.min(3,Math.floor((f-1)/5));const boss=f%RD.perBoss===0;const pool=BANDS[band];const n=Math.min(RD.enemyCap,1+Math.floor((f-1)/3));const foes=[];
+ if(boss)foes.push(RD_BOSSES[(f/RD.perBoss-1)%RD_BOSSES.length]);const cnt=boss?Math.min(2,n):n;for(let i=0;i<cnt;i++)foes.push(pool[Math.floor(rng()*pool.length)]);
+ const room={id:'rd_run',n:`Descent floor ${f}`,threat:f,cap:4,type:boss?'Boss':'Descent',foes:[...new Set(foes)],waves:[foes],ab:[],cr:[],pc:[],run:'rogue',scale:1+RD.scale*(f-1)};ROOMS.rd_run=room;return room}
+function rdFight(){if(!S.run||S.run.mode!=='rogue')return;if(C&&!C.over)return;rdRoom();startCombat('rd_run',false)}
+function rdOffers(){const band=Math.min(3,Math.floor((S.run.floor-1)/5));const pool=bandPool(band);const cats=['Creature','Weapon','Ability','Item','Armor'].sort(()=>rng()-.5);const out=[];
+ for(const cat of cats){const ids=pool.filter(k=>catOf(DEF[k])===cat);if(!ids.length)continue;const id=ids[Math.floor(rng()*ids.length)];out.push({id,rar:1,tier:rng()<RD.upgradeChance?2:1,lv:1});if(out.length>=3)break}
+ return out}
+function onRunWin(m){const R=S.run;
+ if(R.mode==='rogue'){const f=R.floor;S.rogue=S.rogue||{best:0,milestones:0};S.rogue.best=Math.max(S.rogue.best,f);
+  C.units.filter(u=>u.pc&&!u.dead).forEach(u=>{R.hp[u.pc.uid]=Math.min(1,u.hp/u.max+RD.heal)});C.offers=rdOffers();C.bonus=[];C.ups=[];C.coin=0;C.claimId='r'+S.uid++;
+  if(f%RD.perBoss===0){const band=Math.min(3,Math.floor((f-1)/5));const pool=bandPool(band);const id=pool[Math.floor(rng()*pool.length)];const c=newCard(S,id,2,1);R.stash.cards.push(c);R.mintSeen[id]=1;R.minted.push(id);S.coin+=RD.milestoneMarks*(f/RD.perBoss);S.rogue.milestones++;
+   C.bonus.push(`Milestone, floor ${f}: ${DEF[id].n} (Tier 2) is yours permanently, plus ${RD.milestoneMarks*(f/RD.perBoss)} marks`);hist(S,`Rogue Descent milestone at floor ${f}: ${DEF[id].n}`)}
+  return}
+ if(R.mode==='scav'){C.units.filter(u=>u.pc&&!u.dead).forEach(u=>{R.hp[u.pc.uid]=Math.min(1,u.hp/u.max)});const st=R.stage;const pool=bandPool(R.band);const got=[];const n=1+(st%3===0?1:0);
+  for(let i=0;i<n;i++){const id=pool[Math.floor(rng()*pool.length)];const rare=rng()<SCAV.rareChance;const c=newCard(S,id,rare?2:1,1);c.sat=1;S.cards.push(c);R.pend.uids.push([c.uid,id]);got.push(DEF[id].n+(rare?' (T2)':''))}
+  const mk=Math.round(SCAV.marks*(R.band+1)*(1+.25*(st-1)));R.pend.coin+=mk;R.pend.names.push(...got);C.offers=[];C.bonus=[`Stage ${st} loot: ${got.join(', ')} and ${mk} marks (unsecured)`];C.ups=[];C.coin=0;C.claimId='s'+S.uid++;hist(S,`Scavenger stage ${st}: ${got.join(', ')}`);return}
+ if(R.mode==='trial'){const T=TRIALS.find(x=>x.id===R.id);S.trials=S.trials||{};const first=!(S.trials[T.id]&&S.trials[T.id].w);S.trials[T.id]=S.trials[T.id]||{w:0};S.trials[T.id].w++;C.offers=[];C.bonus=[];C.ups=[];C.coin=0;C.claimId='t'+S.uid++;
+  const sol=S.cards.filter(c=>c.gen>1).length;const used=Object.keys(S.rec).length;
+  runRestore();if(first){S.coin+=T.reward.marks;const c=newCard(S,T.reward.card,1,1);S.cards.push(c);C.bonus.push(`First clear: ${T.reward.marks} marks and ${DEF[T.reward.card].n}`);hist(S,`Trial cleared: ${T.n}`)}else C.bonus.push('Cleared again. Rewards are for the first clear.');C.bonus.push(`You solved it with ${used} fusion${used===1?'':'s'}. Other solutions exist.`);runClear();save();return}}
+function runLoss(){const R=S.run;if(!R||C.runDone)return;C.runDone=1;
+ if(R.mode==='rogue'){S.rogue=S.rogue||{best:0,milestones:0};C.runNote=`Run over at floor ${R.floor}. Temporary cards are gone. ${R.minted.length} milestone card${R.minted.length===1?'':'s'} kept.`;runRestore();runClear();hist(S,'Rogue Descent ended at floor '+C.runNote);save()}
+ else if(R.mode==='scav'){const lost=R.pend.uids.length;R.pend.uids.forEach(([u,id])=>{const i=S.cards.findIndex(c=>c.uid===u);if(i>=0)S.cards.splice(i,1)});C.runNote=`You fell at stage ${R.stage}. The satchel (${lost} card${lost===1?'':'s'} and ${R.pend.coin} marks) is lost.`;runClear();hist(S,'Scavenger run lost at stage '+R.stage);save()}
+ else if(R.mode==='trial'){C.runNote='The puzzle wins this round. Your cards are as you left them. Try again or reset.'}}
+function rdAbandon(){if(!S.run)return;const R=S.run;if(R.mode==='rogue'){runRestore();ui.msg=`Descent abandoned at floor ${R.floor}. Milestone cards are kept.`}else if(R.mode==='trial'){runRestore();ui.msg='Trial abandoned.'}else if(R.mode==='scav'){ui.msg='Extract your loot or continue. A scavenger run cannot be abandoned without losing the satchel.';return render()}
+ if(C&&!C.over)C=null;runClear();save();render()}
+/* ----- Scavenger Runs ----- */
+function scStart(){if(S.run||C&&!C.over){ui.err='Finish what you are doing first.';return render()}const b=topBand();if(b<0){ui.err='Clear at least one room in the original world first.';return render()}
+ S.run={mode:'scav',stage:1,band:b,hp:{},pend:{coin:0,uids:[],names:[]}};undo.length=0;ui.msg=`Scavenger run begins in band ${b+1}. Loot is unsecured until you extract.`;save();render()}
+function scRoom(){const R=S.run;const pool=BANDS[R.band];const n=Math.min(SCAV.maxEnemies,1+Math.ceil(R.stage/2));const foes=[];for(let i=0;i<n;i++)foes.push(pool[Math.floor(rng()*pool.length)]);
+ ROOMS.rd_run={id:'rd_run',n:`Scavenging, stage ${R.stage}`,threat:R.band*3+R.stage,cap:4,type:'Scavenge',foes:[...new Set(foes)],waves:[foes],ab:[],cr:[],pc:[],run:'scav',scale:1+SCAV.scale*(R.stage-1)}}
+function scFight(){if(!S.run||S.run.mode!=='scav'||(C&&!C.over))return;scRoom();startCombat('rd_run',false)}
+function scExtract(){const R=S.run;if(!R||R.mode!=='scav')return;if(C&&!C.over){ui.err='Finish the fight first.';return render()}R.pend.uids.forEach(([u])=>{const c=byUid(S.cards,u);if(c)c.sat=0});S.coin+=R.pend.coin;const n=R.pend.uids.length,mk=R.pend.coin;hist(S,`Extracted: ${n} cards, ${mk} marks`);ui.msg=`Extracted ${n} card${n===1?'':'s'} and ${mk} marks after ${R.stage} stage${R.stage===1?'':'s'}.`;runClear();validate(S);save();render()}
+function scNext(){const R=S.run;if(!R||R.mode!=='scav')return;R.stage++;C=null;render()}
+function rdNext(){const R=S.run;if(!R||R.mode!=='rogue')return;R.floor++;C=null;render()}
+/* ----- Trials ----- */
+function trStart(id){if(S.run||C&&!C.over){ui.err='Finish what you are doing first.';return render()}const T=TRIALS.find(x=>x.id===id);if(!T)return;
+ S.run={mode:'trial',id,stash:runStash(),mintSeen:{},minted:[],hp:{}};undo.length=0;S.cards=[];S.pcs=[freshYou()];S.team=[];S.xs=[];S.rec={};
+ T.cards.forEach(([cid])=>{const c=newCard(S,cid,1,1);S.cards.push(c);rdAutoEquip(c)});ui.msg=`Trial started: ${T.n}. Combine cards in the Fusion Chamber, equip in Team, then fight.`;tab='modes';save();render()}
+function trFight(){const R=S.run;if(!R||R.mode!=='trial'||(C&&!C.over))return;const T=TRIALS.find(x=>x.id===R.id);ROOMS.rd_run={id:'rd_run',n:T.n,threat:1,cap:4,type:'Trial',foes:[...new Set(T.waves.flat())],waves:T.waves,ab:[],cr:[],pc:[],run:'trial'};startCombat('rd_run',false)}
+function trReset(){const R=S.run;if(!R||R.mode!=='trial')return;const T=TRIALS.find(x=>x.id===R.id);S.cards=[];S.pcs=[freshYou()];S.rec={};T.cards.forEach(([cid])=>{const c=newCard(S,cid,1,1);S.cards.push(c);rdAutoEquip(c)});C=null;ui.msg='Trial reset to its starting cards.';save();render()}
+function runApplyHp(){if(!S.run||!S.run.hp)return;alive('p').forEach(u=>{if(u.pc&&S.run.hp[u.pc.uid]!==undefined)u.hp=Math.max(1,Math.round(u.max*S.run.hp[u.pc.uid]))})}
+function runWinFooter(){const R=S.run;if(!R)return `<div class="row" style="margin-top:8px"><button class="pri" data-tab="modes">Modes</button></div>`;
+ if(R.mode==='rogue')return `<div class="banner" style="background:var(--grnbg);color:var(--grn)">Floor ${R.floor} cleared. Some health returns between floors; nothing else does.</div><div class="row"><button class="pri" data-rdnext="1">Fight floor ${R.floor+1}</button><button data-tab="team">Team</button><button data-tab="fuse">Fuse</button><button data-rdabandon="1">End run</button></div>`;
+ if(R.mode==='scav')return `<div class="banner" style="background:var(--grnbg);color:var(--grn)">Satchel: ${R.pend.uids.length} card${R.pend.uids.length===1?'':'s'}, ${R.pend.coin} marks. Unsecured: a defeat loses all of it.</div><div class="row"><button class="pri" data-scextract="1">Extract and keep everything</button><button data-scnext="1">Continue to stage ${R.stage+1} (+25% loot, +${Math.round(SCAV.scale*100)}% danger)</button></div>`;
+ return `<div class="row"><button class="pri" data-tab="modes">Modes</button></div>`}
+function runLossHTML(){const m=S.run&&S.run.mode;const t=m==='trial'?`<div class="row"><button class="pri" data-trfight="1">Try again</button><button data-trreset="1">Reset trial</button><button data-tab="team">Team</button><button data-tab="fuse">Fuse</button><button data-rdabandon="1">Leave trial</button></div>`:`<div class="row"><button class="pri" data-tab="modes">Modes</button></div>`;
+ return `<div class="banner" style="background:var(--redbg);color:var(--red)"><b>${m==='trial'?'Not this time.':'Run over.'}</b> ${esc(C.runNote||'')}</div>`+t}
+function modesHTML(){
+ let h=ui.err?`<div class="err">${esc(ui.err)}</div>`:'';ui.err='';if(ui.msg){h+=`<div class="banner" style="background:var(--grnbg);color:var(--grn)">${esc(ui.msg)}</div>`;ui.msg=''}
+ const R=S.run;S.rogue=S.rogue||{best:0,milestones:0};S.trials=S.trials||{};
+ if(R){const live=C&&!C.over;
+  if(R.mode==='rogue'){h+=`<div class="card"><div class="row sb"><b>Rogue Descent: floor ${R.floor}</b><span class="tiny">${S.cards.length} temporary cards</span></div><div class="tiny">Your run collection is separate from your permanent one. Fuse, equip and fight. Every ${RD.perBoss}th floor is a boss and pays a permanent milestone.</div><div class="row" style="margin-top:6px">${live?'<span class="tiny">A fight is in progress.</span>':`<button class="pri" data-rdfight="1">Fight floor ${R.floor}</button>`}<button data-tab="team">Team</button><button data-tab="fuse">Fuse</button><button data-rdabandon="1">End run</button></div></div>`}
+  if(R.mode==='scav'){h+=`<div class="card"><div class="row sb"><b>Scavenger run: stage ${R.stage}</b><span class="tiny">band ${R.band+1}</span></div><div class="tiny">Satchel: ${R.pend.uids.length} cards, ${R.pend.coin} marks, unsecured. ${esc(R.pend.names.join(', '))}</div><div class="row" style="margin-top:6px">${live?'<span class="tiny">A fight is in progress.</span>':`<button class="pri" data-scfight="1">Fight stage ${R.stage}</button>`}${R.pend.uids.length&&!live?'<button data-scextract="1">Extract now</button>':''}<button data-tab="team">Team</button></div></div>`}
+  if(R.mode==='trial'){const T=TRIALS.find(x=>x.id===R.id);h+=`<div class="card"><b>${esc(T.n)}</b><div class="mut">${esc(T.blurb)}</div><div class="tiny">${esc(T.tip)}</div><div class="tiny">Your cards: ${esc(S.cards.map(c=>D(c).n).join(', '))}</div><div class="row" style="margin-top:6px">${live?'<span class="tiny">A fight is in progress.</span>':'<button class="pri" data-trfight="1">Fight</button>'}<button data-tab="fuse">Fuse</button><button data-tab="team">Team</button><button data-trreset="1">Reset</button><button data-rdabandon="1">Leave</button></div></div>`}
+  return h}
+ const b=topBand();
+ h+=`<div class="card"><b>Rogue Descent</b><div class="mut">Start with exactly one card. Win cards in fights, fuse and equip them, and push as deep as you can. Run cards vanish when the run ends. Every ${RD.perBoss} floors you keep a permanent reward.</div><div class="tiny">Best floor ${S.rogue.best} · milestones earned ${S.rogue.milestones}</div>`;
+ const st=stacks(S.cards.filter(c=>!D(c).art));h+=`<div class="tiny" style="margin-top:6px">Choose your one card:</div>`+st.map(s=>`<div class="srow"><span class="nm">${ic(D(s.c).cat)} <b>${esc(D(s.c).n)}</b> ${tpc(s.c)} <span class="tiny">Lv${s.c.lv}${s.n>1?' ×'+s.n:''}</span></span><button class="sm" data-rdstart="${s.cs[0].uid}">Start</button></div>`).join('')+`</div>`;
+ h+=`<div class="card"><b>Scavenger Runs</b><div class="mut">Fight through stages with your real team and gather loot. Loot is unsecured until you extract. Each stage adds loot and danger. A defeat loses the satchel.</div><div class="row" style="margin-top:6px"><button class="pri ${b<0?'dim':''}" data-scstart="1" ${b<0?'disabled':''}>${b<0?'Clear a room first':'Start in band '+(b+1)}</button></div></div>`;
+ h+=`<h2>Trials of Fusion</h2><div class="mut">Each trial gives you a few cards and one ridiculous problem. Fuse something, equip it, and win. Any solution that wins counts.</div>`;
+ h+=TRIALS.map(T=>{const w=(S.trials[T.id]||{}).w||0;return `<div class="card" style="padding:10px 12px"><div class="row sb"><b>${esc(T.n)}</b><span class="chip ${w?'ok':''}">${w?'Cleared ×'+w:'New'}</span></div><div class="tiny">${esc(T.blurb)}</div><div class="row" style="margin-top:4px"><button class="sm pri" data-trstart="${T.id}">${w?'Replay':'Begin'}</button></div></div>`}).join('');return h}
 
 function boot(){const we=validateWorld();if(we.length)console.error('World data errors',we);S=fresh();document.addEventListener('click',onClick);document.addEventListener('input',onInput);render()}
 try {
