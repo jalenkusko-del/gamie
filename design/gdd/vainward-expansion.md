@@ -58,4 +58,4 @@ Collection and shop systems, battle engine (`hit`, `enemyAct`), save code (`enco
 - Batch crafting and multi-sell never produce partial or duplicated results.
 
 ## Open decisions (not canon)
-The T5 Evolved special step is not yet redesigned; Infusion stays automatic by decision (recommendation: 1, 1, 2); respec and refund for infusions; defeat rules between runs; trait capacity (tier + 1) versus the three-property Wolf example;  Rogue Descent reward breadth, scavenger loot tables and trial rewards are placeholders.
+Whether Tiers 2, 4 and 5 keep one choice each; Infusion stays automatic by decision (recommendation: 1, 1, 2); respec and refund for infusions; defeat rules between runs; trait capacity (tier + 1) versus the three-property Wolf example;  Rogue Descent reward breadth, scavenger loot tables and trial rewards are placeholders.

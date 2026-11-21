@@ -1,4 +1,4 @@
-# Prototype: VAINWARD playable build (v1.4)
+# Prototype: VAINWARD playable build (v1.5)
 
 **Hypothesis:** A single-file, card-only tactical RPG can carry three modes (Rogue Descent, Scavenger Runs, Trials of Fusion) and nine themed maps with multi-wave rooms, structured card properties, fusion with forecasts, five-slot Vainbound Infusion and the Vainbound realm, without a second inventory.
 
