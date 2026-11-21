@@ -25,6 +25,11 @@ Keep getting stronger by collecting, fusing and infusing, while the best fights 
 - **Scavenger Runs:** real team and collection. Loot is unsecured (protected from selling and fusing) until you extract. Continuing adds loot and danger; a defeat loses the satchel.
 - **Trials of Fusion:** a fixed puzzle fight with a small temporary card set. Any winning loadout or fusion counts. First clear pays marks and one card.
 
+- **Development model:** Strengthening raises levels (stats only; level cap rises with tier; never reset by evolution). Feeding adds evolution progress only. Evolution changes properties. Tier-up needs progress, not a level.
+- **Species drops:** each enemy species has an exact Creature Card; naturally Tier 1, rarely Tier 2. A Pet Shop listing unlocks on first acquisition.
+- **Fusion inheritance:** result level is 60% of the higher ingredient level, never summed. A fusion has a 20% chance of a Surprise that adds one function derived from an existing property.
+- **Bounds:** dodge capped at 75%, any probability at 95%, a hit at 9999.
+
 ## 4. Formulas
 - Fusion tier: `max(min(a,b), ceil(max(a,b)/2))`, capped at 5.
 - Wave marks: `round(winCoin * WAVES.coinShare)`. Win marks: `(base + perThreat * threat + boss) * (first ? 2 : 0.5) * (hard ? 1.5 : 1)`.
@@ -53,4 +58,4 @@ Collection and shop systems, battle engine (`hit`, `enemyAct`), save code (`enco
 - Batch crafting and multi-sell never produce partial or duplicated results.
 
 ## Open decisions (not canon)
-Tier 2, 4 and 5 development counts (recommendation: 1, 1, 2); respec and refund for infusions; defeat rules between runs; trait capacity (tier + 1) versus the three-property Wolf example; three-ingredient fusion tiers; Rogue Descent reward breadth, scavenger loot tables and trial rewards are placeholders.
+Transformation layering (manual activation versus the current automatic Infusion), Tier 2, 4 and 5 development counts (recommendation: 1, 1, 2); respec and refund for infusions; defeat rules between runs; trait capacity (tier + 1) versus the three-property Wolf example; three-ingredient fusion tiers; Rogue Descent reward breadth, scavenger loot tables and trial rewards are placeholders.

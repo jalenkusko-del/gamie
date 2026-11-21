@@ -117,11 +117,11 @@ color:var(--pale);font-size:14px;line-height:1.55;padding:0}
 
 </style>
 
-<h2 class="sr-only">VAINWARD v1.2, a playable collectible-card tactical RPG: nine original-world maps, a separate Vainbound realm, Tier 5 evolution, Hybrids, Red Artifacts and card-based shops.</h2>
-<main class="shell"><header class="mast"><div class="brandline"><div class="crest" aria-hidden="true">✦</div><div><div class="eyebrow">Tactical card RPG</div><h1>VAINWARD</h1></div></div><span class="version">v1.2</span></header><div class="cg"><nav id="nav" aria-label="Game sections"></nav><div id="app"><section class="card" role="status"><h2>Starting VAINWARD…</h2><p>If this message stays visible, your file viewer may be blocking JavaScript. Open the downloaded HTML file in a full browser such as Safari or Chrome.</p></section></div></div><footer class="footer">VAINWARD · Cards, evolution and tactical combat</footer></main>
+<h2 class="sr-only">VAINWARD v1.3, a playable collectible-card tactical RPG: nine original-world maps, a separate Vainbound realm, Tier 5 evolution, Hybrids, Red Artifacts and card-based shops.</h2>
+<main class="shell"><header class="mast"><div class="brandline"><div class="crest" aria-hidden="true">✦</div><div><div class="eyebrow">Tactical card RPG</div><h1>VAINWARD</h1></div></div><span class="version">v1.3</span></header><div class="cg"><nav id="nav" aria-label="Game sections"></nav><div id="app"><section class="card" role="status"><h2>Starting VAINWARD…</h2><p>If this message stays visible, your file viewer may be blocking JavaScript. Open the downloaded HTML file in a full browser such as Safari or Chrome.</p></section></div></div><footer class="footer">VAINWARD · Cards, evolution and tactical combat</footer></main>
 <script>
 
-const VERSION='1.2';
+const VERSION='1.3';
 const TOK={str:['Strength','off'],crit:['Crit','off'],block:['Block','def'],dodge:['Dodge','def'],guard:['Guard','def'],weak:['Weak','neg'],vuln:['Vulnerable','neg'],mark:['Mark','set'],frenzy:['Frenzy','set'],stun:['Stunned','neg'],frozen:['Frozen','neg'],asleep:['Asleep','neg'],nullify:['Nullified','neg'],forced:['Forced','neg'],rooted:['Rooted','neg']};
 const OPP={str:'weak',weak:'str',block:'vuln',vuln:'block'};const CAP=3;
 const STS={bleed:{n:'Bleed',dmg:3},burn:{n:'Burn',dmg:4}};
@@ -189,7 +189,7 @@ nullward:{n:'Null ward',d:'Cannot be Nullified or Forced to target'},
 grit:{n:'Grit',d:'Shrugs off the first control effect each fight'},
 retaliate:{n:'Retaliate',d:'Melee attackers take 3 damage',thornsV:3},
 bite:{n:'Bite',d:'+10% damage',dmgU:.1},
-pursuit:{n:'Pursuit',d:'+20% damage vs targets using Block, Guard or Dodge',vsTok:{block:.2,guard:.2,dodge:.2}},
+pursuit:{n:'Pursuit',d:'+20% damage vs enemies that are Guarding or Braced (Block or Guard)',vsTok:{block:.2,guard:.2}},
 instinct:{n:'Instinct',d:'+5% dodge',dodgeV:5},
 houseguarantee:{n:'House Guarantee',d:'Cannot be defeated'}
 };
@@ -559,7 +559,7 @@ function newCard(s,id,tier,lv){const d=DEF[id]||s.hy[id];const tr=(d.tr||[]).sli
 function hist(s,t){s.hist.unshift({t,at:new Date().toISOString()});if(s.hist.length>120)s.hist.length=120}
 function rng(){let t=(S.seed+=0x6D2B79F5);t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}
 function crand(){let t=(C.r+=0x6D2B79F5);t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}
-function roll(p){return p>0&&crand()*100<p}
+function roll(p){return p>0&&crand()*100<Math.min(p,95)}
 function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return 'h'+(h>>>0).toString(36)}
 const lvl=xp=>Math.floor(Math.sqrt((xp||0)/8));
 const famLvl=f=>{const ps=f.split('+');return ps.reduce((a,p)=>a+lvl(S.xp[p]),0)/ps.length};
@@ -614,12 +614,12 @@ function applySt(src,u,st,n,trs){if(u.stone){clog(`  ${u.n} is stone: ${STS[st].
  if(st==='bleed'&&trs.includes('ember')&&!u.st.burn){u.st.burn=2;clog(`  Ember: ${u.n} Burn 2`)}
  if(u.st.bleed&&u.st.burn){delete u.st.bleed;delete u.st.burn;const d=10+(trs.includes('cauterizer')?6:0);u.hp=Math.max(0,u.hp-d);clog(`  Cauterize! Bleed + Burn consumed on ${u.n}: −${d}`);addDisc('Status combo — Cauterize (Bleed + Burn)');checkDeath(u)}}
 function checkDeath(u){if(u.hp<=0&&!u.dead){u.dead=true;u.hp=0;clog(u.f&&u.f.decoy?'  The false copy shatters':`  ${u.n} is defeated`);
- if(u.side==='e'){S.kills[u.k]=(S.kills[u.k]||0)+1;if(S.kills[u.k]===3)addDisc(`Weakness intel — ${EN[u.k].n}`);if(u.surr){C.rfail=1;clog(`  ${u.n} fell — recruitment failed`)}if(C.lastCard&&C.cu[C.lastCard])C.cu[C.lastCard].kills=(C.cu[C.lastCard].kills||0)+1;if(u.f&&u.f.split){for(let i=0;i<2;i++)C.units.push(mkE(u.f.split,C.ne++,C.hard));clog('  It splits into smaller creatures')}if(u.f&&u.f.comp)C.comps=(C.comps||0)+1}
+ if(u.side==='e'){(C.slain=C.slain||{})[u.k]=1;S.kills[u.k]=(S.kills[u.k]||0)+1;if(S.kills[u.k]===3)addDisc(`Weakness intel — ${EN[u.k].n}`);if(u.surr){C.rfail=1;clog(`  ${u.n} fell — recruitment failed`)}if(C.lastCard&&C.cu[C.lastCard])C.cu[C.lastCard].kills=(C.cu[C.lastCard].kills||0)+1;if(u.f&&u.f.split){for(let i=0;i<2;i++)C.units.push(mkE(u.f.split,C.ne++,C.hard));clog('  It splits into smaller creatures')}if(u.f&&u.f.comp)C.comps=(C.comps||0)+1}
  if(u.npc&&!u.ghost)C.npcDown=1}}
 function startFx(u,trs){trs.forEach(k=>{const T=TRX(k);if(T.start)for(const t in T.start)addTok(u,t,T.start[t]);if(T.shield)u.sh+=T.shield;if(T.markStart){const e=alive('e').sort((a,b)=>b.hp-a.hp)[0];if(e){addTok(e,'mark',1);clog(`  ${T.n}: ${e.n} marked`)}}})}
 function unitTr(u){return [...new Set([...u.base,...u.dep.flatMap(c=>trOf(c))])]}
 function recalc(u){u.tr=unitTr(u);u.pmax=u.tr.reduce((a,k)=>a+(TRX(k).parry||0),0)}
-function cardStats(u,c){trOf(c).forEach(k=>{const T=TRX(k);if(T.eye){u.dodgeP+=EYEV[c.tier];u.parryP+=EYEV[c.tier]}if(T.crit&&role(D(c))!=='attack')u.critP+=T.crit;if(T.hp){u.max+=T.hp;u.hp+=T.hp}if(T.dmgU)u.dmgU+=T.dmgU;if(T.arm)u.arm+=T.arm;if(T.dodgeV)u.dodgeP+=T.dodgeV})}
+function cardStats(u,c){trOf(c).forEach(k=>{const T=TRX(k);if(T.eye){u.dodgeP+=EYEV[c.tier];u.parryP+=EYEV[c.tier]}if(T.crit&&role(D(c))!=='attack')u.critP+=T.crit;if(T.hp){u.max+=T.hp;u.hp+=T.hp}if(T.dmgU)u.dmgU+=T.dmgU;if(T.arm)u.arm+=T.arm;if(T.dodgeV)u.dodgeP+=T.dodgeV});{const l=(c.lv||1)-1;if(l>0&&(isCr(D(c))||role(D(c))==='passive')){const h=Math.floor(l*1.5);u.max+=h;u.hp+=h;u.dodgeP+=l*.5}}}
 function mkP(p,npc,ext){const P=PCD[p.k];const hp=pcHp(p);
  const u={id:(npc?'n':'p')+p.uid,side:'p',npc:!!npc,pc:p,k:p.k,n:P.n,fam:P.fam,hp,max:hp,arm:P.arm,pos:p.pos,tok:{},st:{},sh:0,off:pcOff(p),prof:P.prof||[],dodgeP:P.spd||0,parryP:0,critP:5,dmgU:0,fr:0,cards:[],pas:[],sups:[],dep:[],base:[],pl:0,leech:P.leech||0,ext:new Set()};
  const cs=npc?NPCAB[p.k].map((id,i)=>({uid:'n'+i,id,lv:1,xp:0,tier:p.tier,gen:1,tr:[],act:[],perm:[],st:{}})):p.ab.slice(0,slots(p)).map(x=>byUid(S.cards,x)).filter(Boolean);
@@ -670,14 +670,14 @@ function hit(src,t,d,base,trs,fams,o){
  if(t.side==='p'&&src.side==='e'&&!d.aoe){const g=alive('p').find(a=>a!==t&&a.tok.guard>0);if(g){useTok(g,'guard');clog(`  ${g.n} guards ${t.n}`);t=g}
   if(t.pl>0){t.pl--;clog(`  ${src.n} → ${t.n}: auto-parried`);return{}}}
  const aim=trs.includes('smartaim');
- if(!aim&&roll(t.dodgeP)){clog(`  ${src.n} → ${t.n}: evaded (${t.dodgeP}% roll)`);const cv=(t.tr||[]).reduce((a,k)=>Math.max(a,TRX(k).counterV||0),0);if(cv){src.hp=Math.max(0,src.hp-cv);clog(`  ${t.n} counters for ${cv}`);checkDeath(src)}return{}}
+ if(!aim&&roll(Math.min(75,t.dodgeP))){clog(`  ${src.n} → ${t.n}: evaded (${t.dodgeP}% roll)`);const cv=(t.tr||[]).reduce((a,k)=>Math.max(a,TRX(k).counterV||0),0);if(cv){src.hp=Math.max(0,src.hp-cv);clog(`  ${t.n} counters for ${cv}`);checkDeath(src)}return{}}
  if(!d.aoe&&roll(t.parryP)){clog(`  ${src.n} → ${t.n}: parried (${t.parryP}% roll)`);return{}}
  if(!aim&&useTok(t,'dodge')){clog(`  ${src.n} → ${t.n}: dodged`);return{}}
  if(useTok(t,'vuln')){x*=1.5;notes.push('Vuln')}
  if(t.chim&&src.side==='e'&&t.chim.fams.includes(src.fam)){x*=1-t.chim.red;notes.push('Chimeric')}
  if(useTok(t,'block')){x*=.5;notes.push('Blocked');if(t.tr.includes('scrappy')){addTok(t,'str',1);notes.push('Scrappy +Str')}if(t.tr.includes('blocksiphon')){t.hp=Math.min(t.max,t.hp+3);src.hp=Math.max(0,src.hp-3);notes.push('Block siphon');checkDeath(src)}}
  let arm=t.arm-(src.heretic>=3?1:0)-trs.reduce((a,k)=>a+(TRX(k).pierce||0),0);if(trs.includes('vein')&&t.st.bleed)arm=0;arm=Math.max(0,arm);
- const tot=Math.max(1,x-arm)+(src.fr||0);let dmg=Math.floor(tot);src.fr=tot-dmg;if(dmg<1){dmg=1;src.fr=0}
+ const tot=Math.max(1,x-arm)+(src.fr||0);let dmg=Math.min(9999,Math.floor(tot));src.fr=tot-dmg;if(dmg<1){dmg=1;src.fr=0}
  const a=Math.min(t.sh,dmg);t.sh-=a;t.hp=Math.max(0,t.hp-(dmg-a));
  if(t.side==='p'&&C.casino&&t.hp<=0&&t.tr&&t.tr.includes('houseguarantee')){t.hp=1;notes.push('House Guarantee')}
  if(t.f){if(t.f.rage&&dmg-a>0)addTok(t,'str',1);if(t.f.heat)t.heatStore=(t.heatStore||0)+(dmg-a)*.5;if(t.f.flip){t.flipI=((t.flipI||0)+1)%2;t.weak=[t.f.flip[t.flipI]];t.res=[t.f.flip[1-t.flipI]]}if(t.f.punish){if(t.lastBy&&t.lastBy===C.lastCard){addTok(t,'block',1);notes.push('punishes repetition')}t.lastBy=C.lastCard}if(src.side==='p'&&t.f.reflect&&dmg>=t.f.reflect){const rr=Math.max(1,Math.floor(dmg*(t.f.reflectPct||.4)));src.hp=Math.max(0,src.hp-rr);notes.push('reflected '+rr)}if(src.side==='p'&&t.f.reflectRanged&&d.reach==='ranged'){const rr=Math.max(1,Math.floor(dmg*t.f.reflectRanged));src.hp=Math.max(0,src.hp-rr);notes.push('reflected '+rr)}if(t.f.decoy&&dmg>0)t.hp=0}
@@ -810,7 +810,7 @@ function runAuto(){let g=0;
   if(!u){endRound();if(!C.over&&!C.unattended){const c=alive('p').find(p=>!p.npc&&p.hp<p.max*.25);if(c){clog(`Auto paused: ${c.n} critical (${c.hp}/${c.max})`);C.paused=1;return}}continue}
   const p=aiPick(u);if(!p){moveUnit(u.id);continue}if(p.surr){forceSurrender(p.surr.id);continue}if(p.tr){transform(u.id);continue}act(u.id,p.a.key,p.t.id)}}
 function givePC(k,why){const o=S.pcs.find(p=>p.k===k);if(o){o.dup++;return `${PCD[k].n} already recruited: +1 duplicate copy (${o.dup} held)`}S.pcs.push({uid:S.uid++,k,lv:1,xp:0,tier:1,dup:0,ab:[],sup:null,pos:PCD[k].pos,evo:0});addDisc('Player Card — '+PCD[k].n);return `New recruit: ${PCD[k].n}${why?' ('+why+')':''}`}
-function gain(c,pts){const out=[];c.xp+=pts;while(c.lv<5&&c.xp>=need(c)){c.xp-=need(c);c.lv++;out.push(`${D(c).n} → Lv${c.lv}`)}if(c.lv>=5&&c.xp>0){c.tp=(c.tp||0)+c.xp;c.xp=0}return out}
+function gain(c,pts){const out=[];c.xp+=pts;while(c.lv<lvCap(c)&&c.xp>=need(c)){c.xp-=need(c);c.lv++;out.push(`${D(c).n} → Lv${c.lv}`)}if(c.lv>=lvCap(c)&&c.xp>0){c.tp=(c.tp||0)+c.xp;c.xp=0}return out}
 function levelUpP(p){const out=[];while(p.lv<5&&p.xp>=p.lv*6*p.tier){p.xp-=p.lv*6*p.tier;p.lv++;out.push(`${PCD[p.k].n} → Lv${p.lv}`)}return out}
 function onWin(){
  if(ROOMS[C.rid].run){clog('Victory');onRunWin(ROOMS[C.rid]);return}
@@ -830,19 +830,18 @@ function onWin(){
  if(C.recruited)C.bonus.push(givePC(C.recruited,'surrendered'));
  if(first&&m.first){if(m.first.startsWith('pc:'))C.bonus.push(givePC(m.first.slice(3),'first clear'));else{const c=newCard(S,m.first,1,1);S.cards.push(c);C.bonus.push('First-clear bonus: '+DEF[m.first].n)}}
  if(C.hard&&!R.hw&&!m.vb){R.hw=1;const k=m.ab[0];const c=newCard(S,k,2,1);S.cards.push(c);C.bonus.push(`Hard first-clear bonus: ${DEF[k].n} T2`)}
- C.bonus.forEach(b=>hist(S,b));hist(S,`Won: ${m.n}${C.hard?' (Hard)':''} in ${C.round} rounds (seed ${C.seed})`);C.claimId='w'+S.uid++}
+ rollDrops(m);C.bonus.forEach(b=>hist(S,b));hist(S,`Won: ${m.n}${C.hard?' (Hard)':''} in ${C.round} rounds (seed ${C.seed})`);C.claimId='w'+S.uid++}
 function claim(i){if(!C||C.over!=='win'||C.claimed)return;const o=C.offers[i];if(!o)return;const c=newCard(S,o.id,o.tier,o.lv);S.cards.push(c);C.claimed=1;if(S.run&&S.run.mode==='rogue')rdAutoEquip(c);hist(S,`Claimed (${C.claimId}): ${DEF[o.id].n} T${o.tier} Lv${o.lv}`);save();render()}
-function canTier(c){return !D(c).art&&c.lv>=5&&c.tier<5&&(c.tp||0)>=tneed(c)}
-function tierUp(uid,quiet){const c=byUid(S.cards,uid);if(!c||!canTier(c))return false;const before=eff(c).pow||0;const nc=capTr(Object.assign({},c,{tier:c.tier+1})).filter(k=>!capTr(c).includes(k));c.tp-=tneed(c);c.tier++;c.lv=1;c.xp=0;if(EVO_CHOICES[c.tier]&&devOptions(c).length)c.pend=EVO_CHOICES[c.tier];if((eff(c).pow||0)<before-1e-9)throw new Error('tier regression');hist(S,`${D(c).n} advanced to Tier ${c.tier}${nc.length?' — gained '+nc.map(k=>TRX(k).n).join(', '):''}`);if(!quiet){save();render()}return true}
+function canTier(c){return !D(c).art&&c.tier<5&&(c.tp||0)>=tneed(c)}
+function tierUp(uid,quiet){const c=byUid(S.cards,uid);if(!c||!canTier(c))return false;const before=eff(c).pow||0;const nc=capTr(Object.assign({},c,{tier:c.tier+1})).filter(k=>!capTr(c).includes(k));c.tp-=tneed(c);c.tier++;if(EVO_CHOICES[c.tier]&&devOptions(c).length)c.pend=EVO_CHOICES[c.tier];if((eff(c).pow||0)<before-1e-9)throw new Error('tier regression');hist(S,`${D(c).n} advanced to Tier ${c.tier}${nc.length?' — gained '+nc.map(k=>TRX(k).n).join(', '):''}`);if(!quiet){save();render()}return true}
 function unequip(u){S.pcs.forEach(p=>{p.ab=p.ab.filter(x=>x!==u);if(p.sup===u)p.sup=null});S.xs=(S.xs||[]).filter(x=>x.c!==u)}
 function rnOf(c,m){const v=ui.rf['n'+c.uid];return Math.min(v!==undefined?v:Math.min(m,1),m)}
-function refVal(c,x){return x.id===c.id?4*x.tier+2*(x.lv-1):2*x.tier}
-function refCands(c){const eq=equippedSet();const same=S.cards.filter(x=>x!==c&&x.id===c.id&&!prot(x,eq)&&x.tier<=c.tier).sort((a,b)=>a.tier-b.tier||a.lv-b.lv);
- const fam=ui.rf.fam?S.cards.filter(x=>x!==c&&x.id!==c.id&&x.gen===1&&!prot(x,eq)&&D(x).fam===D(c).fam.split('+')[0]&&x.tier<=c.tier).sort((a,b)=>a.tier-b.tier):[];return[...same,...fam]}
-function simRefine(c,xs){const t=JSON.parse(JSON.stringify(c));xs.forEach(x=>gain(t,refVal(c,x)));let tiers=0;while(t.lv>=5&&t.tier<5&&t.tp>=t.tier*10){t.tp-=t.tier*10;t.tier++;t.lv=1;tiers++;}return t}
+function refVal(c,x){return feedValue(c,x)}
+function refCands(c){const eq=equippedSet();const pool=S.cards.filter(x=>x!==c&&!D(x).art&&!prot(x,eq));const ex=pool.filter(x=>x.id===c.id).sort((a,b)=>devScore(a)-devScore(b));const rel=ui.rf.fam?pool.filter(x=>feedRel(c,x)==='related').sort((a,b)=>devScore(a)-devScore(b)):[];const oth=ui.rf.other?pool.filter(x=>feedRel(c,x)==='other').sort((a,b)=>devScore(a)-devScore(b)):[];return[...ex,...rel,...oth]}
+function simRefine(c,xs){const t=JSON.parse(JSON.stringify(c));xs.forEach(x=>{t.tp=(t.tp||0)+feedValue(c,x)});while(t.tier<5&&t.tp>=t.tier*10){t.tp-=t.tier*10;t.tier++}return t}
 function refine(uid,xuids,autoTier){const c=byUid(S.cards,uid);const xs=xuids.map(u=>byUid(S.cards,u)).filter(x=>x&&x!==c);if(!c||!xs.length)return;
- const pts=xs.reduce((a,x)=>a+refVal(c,x),0);xs.forEach(x=>{S.cards.splice(S.cards.indexOf(x),1);unequip(x.uid)});gain(c,pts);
- if(autoTier)while(canTier(c))tierUp(c.uid,1);hist(S,`Refined ${D(c).n} with ${xs.length} card${xs.length>1?'s':''} (+${pts}) → T${c.tier} Lv${c.lv}`)}
+ const pts=xs.reduce((a,x)=>a+refVal(c,x),0);xs.forEach(x=>{S.cards.splice(S.cards.indexOf(x),1);unequip(x.uid)});c.tp=(c.tp||0)+pts;
+ if(autoTier)while(canTier(c))tierUp(c.uid,1);hist(S,`Fed ${D(c).n} with ${xs.length} card${xs.length>1?'s':''} (+${pts} evolution progress)`)}
 const EVO=d=>isCr(d)?'reflex':isAtk(d)?'scan':'parry';
 function evolve(uid,list){const c=byUid(S.cards,uid);const xs=list.map(u=>byUid(S.cards,u));if(!c||c.evo||c.tier<5||xs.length!==2||xs.some(x=>!x||x.id!==c.id||x.tier<5||x===c))return;
  snapshot('evolve '+D(c).n);const e=EVO(D(c));c.evo=1;if(!c.perm.includes(e))c.perm.push(e);xs.forEach(x=>{S.cards.splice(S.cards.indexOf(x),1);unequip(x.uid)});addDisc(`Evolution — ${D(c).n} gained ${TRX(e).n}`);hist(S,`Evolved ${D(c).n} (consumed #${list.join(', #')})`);ui.rf={};save();render()}
@@ -901,16 +900,16 @@ function doFuse(A,B,Br,label){
  if(!S.hy[br.id])S.hy[br.id]=Object.assign({},br.d,{gen:br.gen});commitProps(br.all);
  const ins=br.usesBr?[A,B,Br]:[A,B];const dom=br.dom?byUid(S.cards,br.dom):null;
  const cap=br.tier+1+(br.capB||0);const act=[];[...br.tr,...br.em,...(dom?dom.act:[]),...br.all].forEach(k=>{if(act.length<cap&&!act.includes(k))act.push(k)});
- const c={uid:S.uid++,id:br.id,lv:dom?dom.lv:1,xp:dom?dom.xp:0,tp:dom?dom.tp||0:0,tier:br.tier,gen:br.gen,tr:br.all,act,perm:br.perm,st:dom?JSON.parse(JSON.stringify(dom.st)):{},orig:br.d.orig,capB:br.capB||0,evo:0,fav:0,lock:0,anc:{n:br.d.n,g:br.gen,p:ins.map(x=>anc(x))}};
+ const c={uid:S.uid++,id:br.id,lv:dom?dom.lv:inheritLv(A,B,br.tier),xp:dom?dom.xp:0,tp:dom?dom.tp||0:0,tier:br.tier,gen:br.gen,tr:br.all,act,perm:br.perm,st:dom?JSON.parse(JSON.stringify(dom.st)):{},orig:br.d.orig,capB:br.capB||0,evo:0,fav:0,lock:0,anc:{n:br.d.n,g:br.gen,p:ins.map(x=>anc(x))}};
  const slot=[];S.pcs.forEach(p=>{const i=p.ab.findIndex(u=>ins.some(x=>x.uid===u));if(i>=0)slot.push([p,i])});
- ins.forEach(x=>{const i=S.cards.indexOf(x);if(i>=0)S.cards.splice(i,1);unequip(x.uid)});S.cards.push(c);S.seen[br.id]=1;
+ ins.forEach(x=>{const i=S.cards.indexOf(x);if(i>=0)S.cards.splice(i,1);unequip(x.uid)});S.cards.push(c);S.seen[br.id]=1;if(rng()<FUSE.surprise)surpriseProp(c);
  const r=S.rec[br.id]||(S.rec[br.id]={n:br.d.n,p:br.d.parents,ids:ins.map(x=>x.id),label:br.label,kind:br.kind,hidden:br.hidden||'',at:new Date().toISOString(),cnt:0,fav:0});r.cnt=(r.cnt||0)+1;r.last=Date.now();if(!r.ids)r.ids=ins.map(x=>x.id);
  if(r.cnt===1){addDisc(`${br.hidden==='Exceptional'?'Exceptional':br.hidden?'Lineage':'Common'} discovery — ${br.d.n} (${br.d.parents.join(' + ')}, ${br.label})`);br.em.forEach(e=>addDisc('Emergent trait — '+TRX(e).n))}
  hist(S,`Fusion: ${br.d.n} G${br.gen} T${br.tier} from #${ins.map(x=>x.uid).join(' + #')}`);if(A.evo&&B.evo&&A.tier>=5&&B.tier>=5){c.hyb=1;onHybridCreated(c)}return{c,slot}}
 function fuseConfirm(){
  const [A,B,Br]=fuseSel.map(u=>byUid(S.cards,u));if(!A||!B)return;snapshot('fusion');const r=doFuse(A,B,Br||null,fuseBr);if(!r)return;
  r.slot.slice(0,1).forEach(([p,i])=>{if(!p.ab.includes(r.c.uid)&&p.ab.length<slots(p))p.ab.splice(Math.min(i,p.ab.length),0,r.c.uid)});
- S.lastFuse={rid:r.c.id,n:1};fuseSel=[];fuseBr=null;ui.open={['s'+skey(r.c)]:1};ui.msg=`Created ${D(r.c).n}${r.c.hyb?' (Hybrid)':''}${ui.vbNew?'. The Vainbound realm is now open':''}`;ui.vbNew=0;validate(S);save();render()}
+ S.lastFuse={rid:r.c.id,n:1};fuseSel=[];fuseBr=null;ui.open={['s'+skey(r.c)]:1};ui.msg=`Created ${D(r.c).n}${r.c.hyb?' (Hybrid)':''}${r.c.surpriseText?' · Surprise: '+r.c.surpriseText:''}${ui.vbNew?'. The Vainbound realm is now open':''}`;ui.vbNew=0;validate(S);save();render()}
 function pickIng(id,used,eq){return S.cards.filter(c=>c.id===id&&!used.has(c.uid)&&!prot(c,eq)).sort((a,b)=>b.tier-a.tier||b.lv-a.lv)[0]}
 function recPlan(r,used){used=used||new Set();const eq=equippedSet();const got=[];const miss=[];r.ids.forEach(id=>{const c=pickIng(id,used,eq);if(c){got.push(c);used.add(c.uid)}else miss.push((DEF[id]||S.hy[id]||{n:id}).n)});return{got,miss}}
 function recCount(r){const used=new Set();let n=0;while(n<50){const p=recPlan(r,used);if(p.miss.length)break;n++}return n}
@@ -919,7 +918,7 @@ function queueAdd(item){ui.queue=ui.queue||[];ui.queue.push(item);ui.msg='Added 
 function queuePreview(){const out=[];const used=new Set();const eq=equippedSet();(ui.queue||[]).forEach(q=>{if(q.t==='recipe'){const r=S.rec[q.rid];for(let i=0;i<q.n;i++){const p=recPlan(r,used);out.push(p.miss.length?`✗ ${r.n}: missing ${p.miss.join(', ')}`:`✓ ${r.n} ← #${p.got.map(c=>c.uid).join(' #')}`)}}else if(q.t==='refine'){const c=byUid(S.cards,q.uid);if(!c)return;const xs=q.xs.map(u=>byUid(S.cards,u)).filter(x=>x&&!used.has(x.uid));xs.forEach(x=>used.add(x.uid));const t=simRefine(c,xs);out.push(`✓ Refine ${D(c).n} T${c.tier} Lv${c.lv} → T${t.tier} Lv${t.lv} (uses ${xs.length})`)}});return out}
 function queueRun(){if(!(ui.queue||[]).length)return;snapshot('queue');let ok=0,fail=0;ui.queue.forEach(q=>{if(q.t==='recipe'){for(let i=0;i<q.n;i++){if(runRecipe(q.rid))ok++;else fail++}}else if(q.t==='refine'){refine(q.uid,q.xs,1);ok++}});ui.queue=[];const f=validate(S);ui.msg=`Queue done: ${ok} completed${fail?', '+fail+' skipped (missing cards)':''}${f.length?' · fixed '+f.length+' references':''}`;save();render()}
 function bulkPlan(keep){const eq=equippedSet();const by={};S.cards.forEach(c=>{if(c.gen===1&&!c.evo&&!D(c).art)(by[c.id]=by[c.id]||[]).push(c)});const plan=[];
- Object.values(by).forEach(cs=>{if(cs.length<2)return;const tgt=cs.slice().sort((a,b)=>(eq.has(b.uid)?1:0)-(eq.has(a.uid)?1:0)||b.tier-a.tier||b.lv-a.lv||(b.tp||0)-(a.tp||0))[0];if(tgt.tier>=5&&tgt.lv>=5)return;
+ Object.values(by).forEach(cs=>{if(cs.length<2)return;const tgt=cs.slice().sort((a,b)=>(eq.has(b.uid)?1:0)-(eq.has(a.uid)?1:0)||b.tier-a.tier||b.lv-a.lv||(b.tp||0)-(a.tp||0))[0];if(tgt.tier>=5)return;
   const sp=cs.filter(x=>x!==tgt&&!prot(x,eq)&&x.tier<=tgt.tier).sort((a,b)=>a.tier-b.tier||a.lv-b.lv);const use=sp.slice(0,Math.max(0,sp.length-keep));if(!use.length)return;const t=simRefine(tgt,use);plan.push({tgt,use,t})});return plan.sort((a,b)=>cN(a.tgt).localeCompare(cN(b.tgt)))}
 function teamPlan(rid){const r=S.rec[rid];const team=teamFor();const used=new Set();const eq=equippedSet();const out=[];
  team.forEach(p=>{const own=p.ab.map(u=>byUid(S.cards,u)).filter(c=>c&&r.ids.includes(c.id));const got=[];const miss=[];let slot=-1;
@@ -1174,7 +1173,7 @@ function dline(d){const p=[];const U={once:'one use per fight',passive:'passive'
  if(d.heal)p.push('heal '+r1(d.heal));if(d.shield)p.push('shield '+r1(d.shield));if(d.turret)p.push('turret '+r1(d.turret)+'/round');if(d.medic)p.push('heals '+r1(d.medic)+'/round');if(d.roundMark)p.push('marks each round');if(d.leech)p.push('leech '+Math.round(d.leech*100)+'%');if(d.spend)p.push('spend Mark ×2');if(d.bonusIf)p.push('×1.5 vs '+STS[d.bonusIf].n);
  if(d.note)p.push(d.note);return p.join(' · ')||'—'}
 function cardSum(c){const d=D(c);const e=eff(c);const tr=trOf(c).filter(k=>!TR[k]||!TR[k].cap);return (isCr(d)?'support: '+tr.map(k=>TRX(k).n).join(', '):dline(e))+(tr.length&&!isCr(d)?' · '+tr.map(k=>TRX(k).n).join(', '):'')}
-function badges(st,eq){const c=st.c;let h='';if(st.cs.some(x=>x.fav))h+='<i class="ti ti-star" aria-label="favorite" style="color:var(--amb)"></i>';if(st.cs.some(x=>x.lock))h+='<i class="ti ti-lock" aria-label="locked"></i>';if(D(c).art)h+='<span class="chip art">Red Artifact</span>';if(c.hyb)h+='<span class="chip emg">Hybrid</span>';if(c.evo)h+='<span class="chip off">evolved</span>';if(c.pend)h+=`<span class="chip off">${c.pend} development${c.pend>1?'s':''} to choose</span>`;if(c.gen>1)h+=`<span class="chip set">G${c.gen}</span>`;const ne=st.cs.filter(x=>eq.has(x.uid)).length;if(ne)h+=`<span class="chip def">${ne} equipped</span>`;if(st.cs.some(canTier))h+='<span class="chip ok">tier ready</span>';else if(S.cards.some(x=>x.id===c.id&&!st.cs.includes(x)&&!prot(x,eq))||st.n>1&&(c.lv<5||c.tier<5))h+='<span class="chip ok">refinable</span>';return h}
+function badges(st,eq){const c=st.c;let h='';if(st.cs.some(x=>x.fav))h+='<i class="ti ti-star" aria-label="favorite" style="color:var(--amb)"></i>';if(st.cs.some(x=>x.lock))h+='<i class="ti ti-lock" aria-label="locked"></i>';if(D(c).art)h+='<span class="chip art">Red Artifact</span>';if(c.hyb)h+='<span class="chip emg">Hybrid</span>';if(c.evo)h+='<span class="chip off">evolved</span>';if(c.pend)h+=`<span class="chip off">${c.pend} development${c.pend>1?'s':''} to choose</span>`;if(c.gen>1)h+=`<span class="chip set">G${c.gen}</span>`;const ne=st.cs.filter(x=>eq.has(x.uid)).length;if(ne)h+=`<span class="chip def">${ne} equipped</span>`;if(st.cs.some(canTier))h+='<span class="chip ok">tier ready</span>';else if(S.cards.some(x=>x.id===c.id&&!st.cs.includes(x)&&!prot(x,eq))||st.n>1&&(c.lv<5||c.tier<5))h+='<span class="chip ok">feedable</span>';return h}
 function unitHTML(u){
  const sel=C.sel===u.id&&!C.over;let tg=false;
  if(C.pick&&!C.over){const su=C.units.find(x=>x.id===C.sel);const a=abilList(su).find(x=>String(x.key)===String(C.pick));if(a)tg=targets(su,a.d).includes(u)}
@@ -1241,8 +1240,8 @@ function stackHTML(s,eq){const c=s.c;const d=D(c);const k='s'+s.k;const ex=ui.op
  let h=`<div class="card" style="padding:6px 8px"><div class="srow" style="border:0;padding:0" data-op="${esc(k)}"><span class="nm">${ic(d.cat)} <b>${esc(d.n)}</b> ${tpc(c)} <span class="tiny">Lv${c.lv}</span> ${s.n>1?`<b>×${s.n}</b>`:''} ${badges(s,eq)}<br><span class="tiny">${esc(cardSum(c))}</span></span></div>`;
  if(ex)h+=detailHTML(c,s,eq);return h+'</div>'}
 function detailHTML(c,s,eq){const d=D(c);let h='';
- h+=`<div class="bar x"><i style="width:${c.lv>=5?100:Math.round(100*c.xp/need(c))}%"></i></div><div class="tiny">${c.lv>=5?'Level max for this tier':`Level XP ${c.xp}/${need(c)}`} · power ×${r1(mult(c))}</div>`;
- if(!d.art)h+=`<div class="bar t"><i style="width:${c.tier>=5?100:Math.min(100,Math.round(100*(c.tp||0)/tneed(c)))}%"></i></div><div class="tiny">${c.tier>=5?'Max tier':`Tier progress ${c.tp||0}/${tneed(c)} (from combat use and refining) · tier up also needs Lv5`}</div>`;
+ h+=`<div class="bar x"><i style="width:${c.lv>=5?100:Math.round(100*c.xp/need(c))}%"></i></div><div class="tiny">Strengthening Lv${c.lv}/${lvCap(c)} · ${c.lv>=lvCap(c)?'level cap for this tier':`Combat XP ${c.xp}/${need(c)}`} · ${strengthStats(c)}</div>`;
+ if(!d.art)h+=`<div class="bar t"><i style="width:${c.tier>=5?100:Math.min(100,Math.round(100*(c.tp||0)/tneed(c)))}%"></i></div><div class="tiny">${c.tier>=5?'Max tier':`Evolution progress ${c.tp||0}/${tneed(c)} (from feeding and combat use). Strengthening is kept when you evolve`}</div>`;
  const pl=d.art?[]:capPlan(c);if(d.art)h+=`<div class="tiny">Red Artifact. Used once per fight. ${esc(d.note)}</div>`;if(pl.length)h+=`<div class="tiny" style="margin-top:4px">Tier abilities: ${pl.map(x=>`<span class="chip ${c.tier>=x.t?'t'+x.t:'lat'}">T${x.t} ${esc(TRX(x.k).n)}</span>`).join('')}</div>`;
  const tr=(c.tr||[]).concat((c.perm||[]).filter(x=>!(c.tr||[]).includes(x)));
  if(tr.length)h+=`<div class="tiny" style="margin-top:4px">Inherited traits ${c.act.length}/${capOf(c)} active (tap to toggle):</div><div>${tr.sort().map(k=>{const T=TRX(k);const on=c.act.includes(k);const pm=(c.perm||[]).includes(k);return pm?`<span class="chip off" title="${esc(T.d)}">${esc(T.n)} (evolved)</span>`:`<button class="sm ${on?'on':''}" data-tg="${c.uid}|${k}" title="${esc(T.d)}">${esc(T.n)}${T.emg?' ✦':''}</button>`}).join(' ')}</div>`;
@@ -1250,9 +1249,10 @@ function detailHTML(c,s,eq){const d=D(c);let h='';
  if(c.anc)h+=`<div class="tiny" style="margin-top:4px">Ancestry (${(c.orig||[]).length} originals)</div><div class="tree">${esc(treeTxt(c.anc,'',true,true).join('\n'))}</div>`;
  if(c.pend)h+=`<div class="row" style="margin-top:6px"><button class="sm pri" data-devopen="${c.uid}">Choose ${c.pend} development${c.pend>1?'s':''}</button></div>`;h+=ancHTML(c);if(S.rec[c.id])h+=`<div class="row" style="margin-top:6px"><button class="sm" data-cmore="${c.id}">Craft more</button></div>`;
  h+=`<div class="row" style="margin-top:6px"><button class="sm ${s.cs.some(x=>x.fav)?'on':''}" data-fav="${c.uid}"><i class="ti ti-star" aria-hidden="true"></i> Favorite</button><button class="sm ${s.cs.some(x=>x.lock)?'on':''}" data-lock="${c.uid}"><i class="ti ti-lock" aria-hidden="true"></i> Lock</button>${canTier(c)?`<button class="sm pri" data-ctup="${c.uid}">Advance to Tier ${c.tier+1}</button>`:''}<button class="sm" data-tofuse="${c.uid}">Fuse with…</button></div>`;
- if(!d.art&&!(c.tier>=5&&c.lv>=5)){const cands=refCands(c);const n=rnOf(c,cands.length);
-  h+=`<div class="tiny" style="margin-top:6px">Refine: ${cands.length} eligible card${cands.length===1?'':'s'} (same card${ui.rf.fam?' + same-family originals':''}; protected cards skipped)</div><div class="row"><button class="sm" data-rn="${c.uid}|-1">−</button><b>${n}</b><button class="sm" data-rn="${c.uid}|1">+</button><button class="sm" data-rn="${c.uid}|99">Max</button><button class="sm ${ui.rf.fam?'on':''}" data-rfam="1">Include family</button></div>`;
-  if(n>0){const xs=cands.slice(0,n);const t=simRefine(c,xs);h+=`<div class="tiny">Preview: T${c.tier} Lv${c.lv} → <b>T${t.tier} Lv${t.lv}</b>, tier progress ${t.tp}/${t.tier*10}. Consumes #${xs.map(x=>x.uid).join(' #')}</div><div class="row"><button class="sm pri" data-ref="${c.uid}">Refine now</button><button class="sm" data-rq="${c.uid}">Add to queue</button></div>`}}
+ if(!d.art&&c.lv<lvCap(c)){const room=lvCap(c)-c.lv;h+=`<div class="row" style="margin-top:6px"><span class="tiny">Strengthen: ${strengthCost(c,1)} marks for +1</span><button class="sm" data-str="${c.uid}|1">+1</button>${room>2?`<button class="sm" data-str="${c.uid}|3">+3</button>`:''}<button class="sm" data-str="${c.uid}|${room}">Max</button></div>`}
+ if(!d.art&&c.tier<5){const cands=refCands(c);const n=rnOf(c,cands.length);
+  h+=`<div class="tiny" style="margin-top:6px">Feed: ${cands.length} eligible card${cands.length===1?'':'s'} (exact copies first${ui.rf.fam?', related':''}${ui.rf.other?', unrelated':''}; protected cards skipped). Feeding adds evolution progress only</div><div class="row"><button class="sm" data-rn="${c.uid}|-1">−</button><b>${n}</b><button class="sm" data-rn="${c.uid}|1">+</button><button class="sm" data-rn="${c.uid}|99">Max</button><button class="sm ${ui.rf.fam?'on':''}" data-rfam="1">Related</button><button class="sm ${ui.rf.other?'on':''}" data-rother="1">Unrelated</button></div>`;
+  if(n>0){const xs=cands.slice(0,n);const t=simRefine(c,xs);h+=`<div class="tiny">Preview: evolution progress +${xs.reduce((a,x)=>a+feedValue(c,x),0)} → <b>${t.tier>c.tier?'ready to evolve to T'+t.tier:'T'+t.tier}</b>, progress ${t.tp}/${t.tier*10}. Consumes #${xs.map(x=>x.uid).join(' #')}</div><div class="row"><button class="sm pri" data-ref="${c.uid}">Feed now</button><button class="sm" data-rq="${c.uid}">Add to queue</button></div>`}}
  const ev=S.cards.filter(x=>x.id===c.id&&x!==c&&x.tier>=5);if(c.tier>=5&&!c.evo){const sel=ui.rf['e'+c.uid]||[];h+=`<div class="tiny" style="margin-top:6px">Evolve: 3 identical Tier 5 cards → this one keeps everything and gains ${TRX(EVO(d)).n}. ${ev.length<2?`Need ${2-ev.length} more T5 cop${ev.length?'y':'ies'}.`:'Pick 2 exact copies:'}</div><div class="row">${ev.map(x=>`<button class="sm ${sel.includes(x.uid)?'on':''}" data-esel="${c.uid}|${x.uid}">#${x.uid}${protWhy(x,eq)?' ('+protWhy(x,eq)+')':''}</button>`).join('')}</div>${sel.length===2?`<button class="sm pri" data-evo="${c.uid}">Evolve, consuming #${sel.join(' and #')}</button>`:''}`}
  return h}
 function cardsHTML(){
@@ -1260,8 +1260,8 @@ function cardsHTML(){
  if(ui.devFor)h+=devPanelHTML();const cats=['All','Creature','Weapon','Armor','Ability','Item'];
  h+=`<input data-q="cards" placeholder="Search name, type, family or trait" value="${esc(ui.q.cards||'')}"><div class="row" style="margin-top:4px">${cats.map(c=>`<button class="sm ${ui.flt===c?'on':''}" data-flt="${c}">${c}</button>`).join('')}</div>`;
  h+=`<div class="row" style="margin-top:4px">${[0,1,2,3,4,5].map(t=>`<button class="sm ${ui.tf===t?'on':''}" data-tf="${t}">${t?'T'+t:'All tiers'}</button>`).join('')}<button class="sm ${ui.fav?'on':''}" data-ff="1">★ / locked</button><button class="sm ${ui.upg?'on':''}" data-fu="1">Upgradeable</button></div>`;
- h+=`<div class="row sb" style="margin-top:4px"><span class="tiny">${S.cards.length} cards in ${stacks(S.cards).length} stacks</span><span class="row"><button class="sm" data-bulk="1">Refine all spares</button>${undo.length?`<button class="sm" data-undo="1">Undo</button>`:''}</span></div>`;
- if(ui.bulk){const plan=bulkPlan(ui.keep);h+=`<div class="card" style="border:2px solid var(--border-accent)"><div class="row sb"><b>Bulk refine</b><button class="sm" data-bulk="0">Close</button></div><div class="row"><span class="tiny">Keep spare copies per card:</span>${[0,1,2,3].map(k=>`<button class="sm ${ui.keep===k?'on':''}" data-keep="${k}">${k}</button>`).join('')}</div>${plan.length?plan.map(p=>`<div class="tiny">${esc(D(p.tgt).n)} #${p.tgt.uid}: T${p.tgt.tier} Lv${p.tgt.lv} → <b>T${p.t.tier} Lv${p.t.lv}</b> · uses ${p.use.length}</div>`).join('')+`<button class="pri sm" data-bulkgo="1" style="margin-top:6px">Refine ${plan.length} card${plan.length>1?'s':''}, consuming ${plan.reduce((a,p)=>a+p.use.length,0)}</button><div class="tiny">Skips equipped, favorite, locked, evolved and unique-lineage cards. Undo is available.</div>`:'<div class="tiny">Nothing to refine with these settings.</div>'}</div>`}
+ h+=`<div class="row sb" style="margin-top:4px"><span class="tiny">${S.cards.length} cards in ${stacks(S.cards).length} stacks</span><span class="row"><button class="sm" data-bulk="1">Feed all spares</button><button class="sm" data-advall="1">Advance all ready</button><button class="sm" data-streq="1">Strengthen equipped</button>${undo.length?`<button class="sm" data-undo="1">Undo</button>`:''}</span></div>`;
+ if(ui.bulk){const plan=bulkPlan(ui.keep);h+=`<div class="card" style="border:2px solid var(--border-accent)"><div class="row sb"><b>Feed all spares</b><button class="sm" data-bulk="0">Close</button></div><div class="row"><span class="tiny">Keep spare copies per card:</span>${[0,1,2,3].map(k=>`<button class="sm ${ui.keep===k?'on':''}" data-keep="${k}">${k}</button>`).join('')}</div>${plan.length?plan.map(p=>`<div class="tiny">${esc(D(p.tgt).n)} #${p.tgt.uid}: T${p.tgt.tier} Lv${p.tgt.lv} → <b>T${p.t.tier}</b>, progress ${p.t.tp}/${p.t.tier*10} · uses ${p.use.length}</div>`).join('')+`<button class="pri sm" data-bulkgo="1" style="margin-top:6px">Feed ${plan.length} card${plan.length>1?'s':''}, consuming ${plan.reduce((a,p)=>a+p.use.length,0)}</button><div class="tiny">Skips equipped, favorite, locked, evolved and unique-lineage cards. Undo is available.</div>`:'<div class="tiny">Nothing to refine with these settings.</div>'}</div>`}
  h+=`<div id="L-cards">${cardList()}</div>`;return h}
 function brHTML(b){const sel=fuseBr===b.label;if(b.locked)return `<div class="card" style="opacity:.8"><b>${b.lockKind==='hidden'?'???':esc(b.d.n)}</b> <span class="tiny">${b.kind}${b.hidden?' · '+b.hidden:''}</span><div class="tiny">${esc(b.hint)}</div></div>`;
  const ps={id:'_',lv:b.dom?byUid(S.cards,b.dom).lv:1,tier:b.tier,tr:b.all,act:[],perm:b.perm,st:{}};const cap=b.tier+1+(b.capB||0);[...b.tr,...b.em,...b.all].forEach(k=>{if(ps.act.length<cap&&!ps.act.includes(k))ps.act.push(k)});
@@ -1306,7 +1306,7 @@ function archHTML(){
 function render(){
  const tabs=[['map','World'],['battle','Battle'],['team','Team'],['cards','Cards'],['fuse','Fuse'],['shop','Shop'],['vb','Vainbound'],['modes','Modes'],['arch','Archive']];
  $('nav').innerHTML=tabs.map(([k,l])=>`<button class="${tab===k?'on':''} ${k==='vb'&&!S.prog.vainbound?'dim':''}" data-tab="${k}">${l}${k==='battle'&&C&&!C.over?' •':''}${k==='fuse'&&(ui.queue||[]).length?' ('+ui.queue.length+')':''}</button>`).join('');
- const SEC={map:['Original world','Nine maps, 28 rooms. Clear a room to unlock the next.'],shop:['Shop','Buy and sell cards. Everything you own is a card.'],modes:['Modes','Rogue Descent, Scavenger Runs and Trials of Fusion.'],vb:['Vainbound realm','A separate realm of exceptional bosses. Opened by your first Hybrid.'],battle:['Battle','Command your fighters each round. Each fighter takes one standard action.'],team:['Team','Set each fighter\'s cards, shared slots and saved loadouts.'],cards:['Cards','Your collection, sorted by tier. Refine spare copies to level cards up.'],fuse:['Fusion Chamber','Fuse cards into new cards, or infuse eligible cards into your Vainbound.'],arch:['Archive','Save your progress as a code, or restore it from one.']};
+ const SEC={map:['Original world','Nine maps, 28 rooms. Clear a room to unlock the next.'],shop:['Shop','Buy and sell cards. Everything you own is a card.'],modes:['Modes','Rogue Descent, Scavenger Runs and Trials of Fusion.'],vb:['Vainbound realm','A separate realm of exceptional bosses. Opened by your first Hybrid.'],battle:['Battle','Command your fighters each round. Each fighter takes one standard action.'],team:['Team','Set each fighter\'s cards, shared slots and saved loadouts.'],cards:['Cards','Your collection. Strengthen cards, feed spares toward evolution, and evolve them.'],fuse:['Fusion Chamber','Fuse cards into new cards, or infuse eligible cards into your Vainbound.'],arch:['Archive','Save your progress as a code, or restore it from one.']};
  const hd=SEC[tab];
  $('app').innerHTML=`<header class="sec"><h2>${hd[0]}</h2><p class="mut">${hd[1]}</p></header>`+((modalBlocks(tab)?(()=>`<div class="card"><b>Unavailable during a run</b><div class="mut">This part of the game is paused while your ${S.run.mode==='rogue'?'Rogue Descent':S.run.mode==='trial'?'trial':'Scavenger run'} is active.</div><div class="row" style="margin-top:6px"><button class="pri" data-tab="modes">Back to the run</button></div></div>`):{map:mapHTML,battle:battleHTML,team:teamHTML,cards:cardsHTML,fuse:fuseHTML,shop:shopHTML,vb:vbHTML,modes:modesHTML,arch:archHTML}[tab])())}
 function assign(take){const pk=ui.pick;if(!pk)return;const c=byUid(S.cards,take);if(!c)return;const p=pk.p?byUid(S.pcs,pk.p):null;
@@ -1391,6 +1391,10 @@ function onClick(e){
  if(Q.tg){const[u,k]=Q.tg.split('|');return toggleTr(+u,k)}
  if(Q.ctup){snapshot('tier up');tierUp(+Q.ctup);return}
  if(Q.rn){const [u,d]=Q.rn.split('|').map(Number);const c=byUid(S.cards,u);const m=refCands(c).length;const cur=rnOf(c,m);ui.rf['n'+u]=d===99?m:Math.max(0,Math.min(m,cur+d));return render()}
+ if(Q.rother){ui.rf.other=!ui.rf.other;return render()}
+ if(Q.str){const [u,n]=Q.str.split('|').map(Number);return strengthenCard(u,n)}
+ if(Q.advall)return advanceAll();
+ if(Q.streq)return strengthenEquipped();
  if(Q.rfam){ui.rf.fam=!ui.rf.fam;return render()}
  if(Q.ref){const c=byUid(S.cards,+Q.ref);const xs=refCands(c).slice(0,rnOf(c,refCands(c).length));if(!xs.length)return;snapshot('refine '+D(c).n);refine(c.uid,xs.map(x=>x.uid),0);ui.rf={};ui.open={};ui.msg=`Refined ${D(c).n} → T${c.tier} Lv${c.lv}${canTier(c)?' · tier advance ready':''}`;validate(S);save();return render()}
  if(Q.rq){const c=byUid(S.cards,+Q.rq);const xs=refCands(c).slice(0,rnOf(c,refCands(c).length));if(!xs.length)return;queueAdd({t:'refine',uid:c.uid,xs:xs.map(x=>x.uid)});return}
@@ -1494,6 +1498,7 @@ function fuseForecast(A,B,Br,b){const L=Math.min(A.tier,B.tier),H=Math.max(A.tie
  if(b.mg){b.mg.notes.eq.forEach(x=>lines.push('Equivalent, not stacked: '+x));b.mg.notes.integ.forEach(x=>lines.push('Integrated: '+x));b.mg.notes.conv.forEach(x=>lines.push('Conversion: '+x))}
  if(b.em&&b.em.length)lines.push('New interaction: '+b.em.map(k=>TRX(k).n).join(', '));
  const unc=[];if(b.hidden)unc.push('a hidden condition decides whether this branch opens');if(b.usesBr)unc.push('three-ingredient tiers are not approved; the existing bridge rule applies');if((b.all||[]).length>capOfTier(b))unc.push('only '+capOfTier(b)+' properties can be active at once');
+ lines.push(`Stat inheritance: Lv${inheritLv(A,B,b.tier)} (${Math.round(FUSE.lvInherit*100)}% of the higher ingredient level, never added up, so repeated fusion cannot inflate stats)`);lines.push(`Possible surprise: ${Math.round(FUSE.surprise*100)}% chance that one property gains an extra function derived from itself${b.em&&b.em.length?'; an emergent interaction is also possible':''}`);
  lines.push('Uncertainty: '+(unc.join('; ')||'none. The listed properties are certain; stats follow the stat-inheritance rules.'));return lines}
 const capOfTier=b=>b.tier+1+(b.capB||0);
 /* categories: five card categories over the existing internal categories */
@@ -1627,7 +1632,51 @@ function modesHTML(){
  h+=`<h2>Trials of Fusion</h2><div class="mut">Each trial gives you a few cards and one ridiculous problem. Fuse something, equip it, and win. Any solution that wins counts.</div>`;
  h+=TRIALS.map(T=>{const w=(S.trials[T.id]||{}).w||0;return `<div class="card" style="padding:10px 12px"><div class="row sb"><b>${esc(T.n)}</b><span class="chip ${w?'ok':''}">${w?'Cleared ×'+w:'New'}</span></div><div class="tiny">${esc(T.blurb)}</div><div class="row" style="margin-top:4px"><button class="sm pri" data-trstart="${T.id}">${w?'Replay':'Begin'}</button></div></div>`}).join('');return h}
 
-function boot(){const we=validateWorld();if(we.length)console.error('World data errors',we);S=fresh();document.addEventListener('click',onClick);document.addEventListener('input',onInput);render()}
+
+/* ===== Development model: Strengthening (levels, permanent), Feeding (evolution progress), Evolution (properties). Species drops. ===== */
+/* Provisional numbers. Feeding relation multipliers: exact copy 1, related 0.4, unrelated 0.15. */
+const FEED={exact:1,related:.4,other:.15,minTier:.25};
+const FUSE={surprise:.2,lvInherit:.6};
+const DROP={rate:.2,boss:.3,tier2:.08,hard:1.25};
+const LVCAP=[0,5,7,9,11,13];
+const STRENGTH={cost:15};
+const lvCap=c=>LVCAP[Math.min(5,Math.max(1,c.tier))];
+function feedRel(c,x){if(x.id===c.id)return 'exact';const a=D(c),b=D(x);if(a.cat===b.cat||String(a.fam).split('+')[0]===String(b.fam).split('+')[0])return 'related';return 'other'}
+function feedValue(c,x){const rel=feedRel(c,x);const base=rel==='exact'?4*x.tier+2*(x.lv-1):4*x.tier+(x.lv-1);const tf=x.tier>=c.tier?1:Math.max(FEED.minTier,x.tier/c.tier);return Math.max(1,Math.round(base*FEED[rel]*tf))}
+function inheritLv(A,B,tier){return Math.max(1,Math.min(LVCAP[Math.min(5,tier)],Math.floor(Math.max(A.lv,B.lv)*FUSE.lvInherit)))}
+function strengthCost(c,n){let t=0;for(let i=0;i<n;i++)t+=STRENGTH.cost*c.tier*(c.lv+i);return t}
+function strengthenCard(uid,n){const c=byUid(S.cards,uid);if(!c||D(c).art)return;const room=lvCap(c)-c.lv;n=Math.min(n,room);if(n<1){ui.err='This card is at its level cap for Tier '+c.tier+'. Evolve it to raise the cap.';return render()}
+ const cost=strengthCost(c,n);if(S.coin<cost){ui.err=`Strengthening costs ${cost} marks.`;return render()}snapshot('strengthen '+D(c).n);S.coin-=cost;c.lv+=n;c.xp=0;hist(S,`Strengthened ${D(c).n} to Lv${c.lv} (${cost} marks)`);ui.msg=`${D(c).n} strengthened to Lv${c.lv} for ${cost} marks. Strengthening survives evolution.`;save();render()}
+function strengthenEquipped(){const eq=equippedSet();const cs=[...eq.keys()].map(u=>byUid(S.cards,u)).filter(c=>c&&!D(c).art&&c.lv<lvCap(c));if(!cs.length){ui.msg='Every equipped card is at its level cap.';return render()}
+ const cost=cs.reduce((a,c)=>a+strengthCost(c,1),0);if(S.coin<cost){ui.err=`Strengthening all equipped cards costs ${cost} marks.`;return render()}snapshot('strengthen equipped');S.coin-=cost;cs.forEach(c=>{c.lv++;c.xp=0});hist(S,`Strengthened ${cs.length} equipped cards (${cost} marks)`);ui.msg=`Strengthened ${cs.length} equipped cards by one level for ${cost} marks.`;save();render()}
+function advanceAll(){let n=0,pend=0;snapshot('advance all');S.cards.forEach(c=>{let g=0;while(canTier(c)&&g++<5){if(tierUp(c.uid,true))n++}if(c.pend)pend++});if(!n){undo.pop();ui.msg='No cards are ready to advance.';return render()}ui.msg=`Advanced ${n} tier${n>1?'s':''}. ${pend} card${pend===1?'':'s'} now ${pend===1?'has':'have'} developments to choose. Choices are never made for you.`;save();render()}
+function strengthStats(c){const r=D(c);const l=c.lv-1;if(isCr(r)||role(r)==='passive')return `+${Math.floor(l*1.5)} HP, +${r1(l*.5)}% dodge (speed), ${2*l+3*(c.tier-1)} shield`;if(role(r)==='attack')return `attack ×${r1(mult(c))}`;return `×${r1(mult(c))}`}
+/* species drops: every enemy species has an exact Creature Card */
+const SPECIES={};
+const PNAME={armor:'Hide',dodge:'Agility',leech:'Drain',pierce:'Rend',thorns:'Spines',dmgU:'Fury',crit:'Edge',hp:'Vigor',vsSt:'Opportunism'};
+function regStatic(def){const id='p'+hash(JSON.stringify({p:def.parts.map(x=>[x.eff,x.k||'',x.v]),b:def.beh||[]}));if(!PRT[id])PRT[id]={n:def.n,root:def.root||def.n,lvl:1,parts:def.parts,beh:def.beh||[],from:[],why:'Native property'};return id}
+function speciesCard(k,E){const mv=E.moves||[];const parts=[];
+ if(E.arm>=2)parts.push({eff:'armor',v:Math.min(4,Math.round(E.arm/2))});
+ if(E.dodge)parts.push({eff:'dodge',v:Math.min(15,5*Math.max(1,Math.round(E.dodge/15)))});
+ if(mv.some(m=>m.leech))parts.push({eff:'leech',v:.1});
+ if(mv.some(m=>m.pen))parts.push({eff:'pierce',v:1});
+ if(E.f&&(E.f.reflect||E.f.reflectRanged))parts.push({eff:'thorns',v:1});
+ if(E.f&&E.f.esc)parts.push({eff:'dmgU',v:.05});
+ if(E.crit)parts.push({eff:'crit',v:Math.min(10,5*Math.max(1,Math.round(E.crit/10)))});
+ if(mv.some(m=>m.st&&m.st.bleed))parts.push({eff:'vsSt',k:'bleed',v:.1});
+ parts.push({eff:'hp',v:Math.min(10,Math.max(2,Math.round(E.hp/12)))});
+ if(parts.length<2)parts.push({eff:'dmgU',v:.05});
+ const ids=parts.map(p=>regStatic({n:PNAME[p.eff]||p.eff,root:PNAME[p.eff]||p.eff,parts:[p],beh:[]}));
+ return{n:E.n,cat:'Creature',fam:E.fam,tr:ids,fn:[E.fam],species:k}}
+function buildSpecies(){const byName={};Object.keys(DEF).forEach(k=>{if(DEF[k].cat==='Creature')byName[DEF[k].n.toLowerCase()]=k});
+ const ALIAS={rat:'ashrat',bat:'duskbat',beetle:'thornback',wolf:'wolfpup',eel:'eelc',mothling:'embermoth'};
+ Object.keys(EN).forEach(k=>{if(k==='decoy'||k==='dax')return;const E=EN[k];let id=ALIAS[k]||byName[E.n.toLowerCase()];if(!id&&DEF[k]&&DEF[k].cat==='Creature')id=k;if(!id){id='sp_'+k;DEF[id]=speciesCard(k,E)}SPECIES[k]=id});
+ const have=new Set(SHOPS.pet.stock.map(x=>x[0]));Object.keys(SPECIES).forEach(k=>{const id=SPECIES[k];if(!have.has(id)){have.add(id);const E=EN[k];SHOPS.pet.stock.push([id,Math.round(20+E.hp*1.2+(E.boss?60:0))])}});
+ SHOPS.pet.stock.sort((a,b)=>a[1]-b[1])}
+function rollDrops(m){Object.keys(C.slain||{}).forEach(k=>{const id=SPECIES[k];if(!id)return;const E=EN[k];const p=(E.boss?DROP.boss:DROP.rate)*(C.hard?DROP.hard:1);if(rng()<p){const t=rng()<DROP.tier2?2:1;const c=newCard(S,id,t,1);S.cards.push(c);C.bonus.push(`Creature drop: ${DEF[id].n}${t>1?' (Tier 2, rare)':''}`);hist(S,`Drop: ${DEF[id].n} T${t}`)}})}
+function surpriseProp(c){const ks=(c.tr||[]).filter(k=>propDef(k)&&propDef(k).parts.length);for(const k of ks){const ex=expandDefs(propDef(k));if(ex.length){const o={kind:'Surprise',ks:[k],from:propDef(k),to:ex[0].def};devApply(c,o);c.surpriseText=optText(o);return}}}
+
+function boot(){buildSpecies();const we=validateWorld();if(we.length)console.error('World data errors',we);S=fresh();document.addEventListener('click',onClick);document.addEventListener('input',onInput);render()}
 try {
  if(typeof document!=='undefined'&&document.getElementById('app'))boot();
 } catch (error) {
