@@ -1,4 +1,4 @@
-# Prototype: VAINWARD playable build (v1.3)
+# Prototype: VAINWARD playable build (v1.4)
 
 **Hypothesis:** A single-file, card-only tactical RPG can carry three modes (Rogue Descent, Scavenger Runs, Trials of Fusion) and nine themed maps with multi-wave rooms, structured card properties, fusion with forecasts, five-slot Vainbound Infusion and the Vainbound realm, without a second inventory.
 
@@ -13,5 +13,5 @@
 - Unverified by a human playtest: balance, pacing, and mobile feel beyond a 390px layout check.
 - Modes use a run-scoped card set: Rogue Descent and Trials swap the collection out and restore it afterwards, so there is still one collection at a time. Run cards never unlock shop listings, and infusions cannot be changed during a run.
 - Trials: each of the six has several winning loadouts and at least one naive loadout that loses.
-- Development model: Strengthening (levels, bought with marks or earned in combat, kept through evolution), Feeding (evolution progress only; exact copy 1x, related 0.4x, unrelated 0.15x, reduced for low-tier fodder), Evolution (properties only).
+- Development model: Strengthening (levels, paid in cards, never in combat or marks, kept through evolution), Feeding (evolution progress only; exact copy 1x, related 0.4x, unrelated 0.15x, reduced for low-tier fodder), Evolution (properties only).
 - Every enemy species, bosses included, has an exact Creature Card with a repeatable drop (20%, bosses 30%, about 8% of drops Tier 2).
